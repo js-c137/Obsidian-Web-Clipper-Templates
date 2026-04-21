@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "AGU Article - Old Style",
+  "behavior": "create",
+  "noteNameFormat": "{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}})",
+  "path": "Research/Literature",
+  "triggers": ["agupubs.onlinelibrary.wiley.com/doi", "onlinelibrary.wiley.com/doi"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume_issue",
+      "value": "{{selector:.volume-issue|first}}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{selector:.epub-date}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:.article-section__abstract .article-section__content|first|remove_html:span|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{selector:.keywords .rlist--inline .badge-type}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/agu",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.article-section__abstract .article-section__content|first|remove_html:span|markdown|trim}}\n\n---\n\n{% if selectorHtml:.article-section__content.synopsis %}## Plain Language Summary\n\n{{selectorHtml:.article-section__content.synopsis|markdown|trim}}\n\n---\n\n{% endif %}## Article Content\n\n{{selectorHtml:.article-section__full .article-section__content|join:\"\n\n\"|remove_html:span|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.article-section__references ul|remove_html:div|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

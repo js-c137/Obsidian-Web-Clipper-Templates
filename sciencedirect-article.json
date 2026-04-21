@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "ScienceDirect Article",
+  "behavior": "create",
+  "noteNameFormat": "{{selector:.author-group .text.surname|first}} ({{selector:.publication-volume .text-xs|first|split:\", \"|slice:1,2|join|split:\" \"|last}})",
+  "path": "Research/Literature",
+  "triggers": ["sciencedirect.com/science/article", "schema:@Article"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.author-group .react-xocs-alternative-link}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{selector:.publication-volume .anchor-text|first}}",
+      "type": "text"
+    },
+	{
+	  "name": "volume",
+	  "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|first}}",
+	  "type": "text"
+	},
+	{
+	  "name": "date",
+	  "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|slice:1,2|join}}",
+	  "type": "text"
+	},
+	{
+	  "name": "pages",
+	  "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|last}}",
+	  "type": "text"
+	},
+    {
+      "name": "doi",
+      "value": "{{selector:.doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+	{
+	  "name": "abstract",
+	  "value": "{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}",
+	  "type": "text"
+	},
+    {
+      "name": "keywords",
+      "value": "{{selector:.keywords-section .keyword span}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/sciencedirect",
+      "type": "multitext"
+    }
+  ],
+	"noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}\n\n---\n\n## Highlights\n\n{{selectorHtml:.abstract.author-highlights|first|remove_html:h2|markdown|trim}}\n\n---\n\n{{content}}\n\n---\n\n## Figures and Captions\n\n{{selectorHtml:.Body .figure.text-xs|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

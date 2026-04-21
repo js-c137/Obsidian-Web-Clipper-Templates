@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "Springer Article",
+  "behavior": "create",
+  "noteNameFormat": "{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}})",
+  "path": "Research/Literature",
+  "triggers": ["link.springer.com/article", "springer.com/article"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{selector:.c-article-title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.c-article-author-list__item > a}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "{{meta:name:citation_firstpage}}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{selector:.c-article-identifiers li:nth-child(3) time}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:#Abs1-section .c-article-section__content|remove_html:figure|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/springer",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{selector:.c-article-title}}\n\n## Abstract\n\n{{selectorHtml:#Abs1-section .c-article-section__content|remove_html:figure|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.main-content|strip_attr:title|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.c-article-references__text|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}
