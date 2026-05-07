@@ -2,7 +2,7 @@
   "schemaVersion": "0.1.0",
   "name": "Springer Article",
   "behavior": "create",
-  "noteNameFormat": "{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}})",
+  "noteNameFormat": "{% if selector:.c-article-author-list__item:nth-child(3) > a %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.c-article-author-list__item:nth-child(2) > a %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} and {{selector:.c-article-author-list__item:nth-child(2) > a|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
   "path": "Research/Literature",
   "triggers": ["link.springer.com/article", "springer.com/article"],
   "properties": [
@@ -72,5 +72,5 @@
       "type": "multitext"
     }
   ],
-  "noteContentFormat": "# {{selector:.c-article-title}}\n\n## Abstract\n\n{{selectorHtml:#Abs1-section .c-article-section__content|remove_html:figure|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.main-content|strip_attr:title|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.c-article-references__text|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{selector:.c-article-title}}\n\n## Abstract\n\n{{selectorHtml:#Abs1-section .c-article-section__content|remove_html:figure|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.main-content|remove_html:figure|strip_attr:title|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:.c-article-section__figure[id^=\"figure-\"]|join:\"\n\n\"|remove_html:span|remove_html:svg|remove_html:a|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.c-article-references__text|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }

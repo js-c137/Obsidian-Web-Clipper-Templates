@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "Science.org Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:article header a[href=\"#con3\"] %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} et al. ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{% if selector:article header a[href=\"#con2\"] %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} and {{selector:a[href=\"#con2\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "triggers": ["science.org/doi"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:article header a[href^=\"#con\"]}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume_issue",
+      "value": "{{selector:article header nav a[href*=\"/toc/\"]|first}}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{selector:article header .core-date-published}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{selector:article header a[href^=\"https://doi.org/10.\"]|first|split:\"DOI: \"|last}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:#abstract|remove_html:h2|remove_html:h3|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/science-org",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:#abstract|remove_html:h2|remove_html:h3|markdown|trim}}\n\n---\n\n## Article Content\n\n{% if selectorHtml:.core-container:has([role=\"doc-acknowledgments\"]) %}{{selectorHtml:.core-container:has([role=\"doc-acknowledgments\"])|remove_html:figure|markdown|trim}}{% else %}{{content}}{% endif %}\n\n---\n\n## References\n\n{{selectorHtml:#bibliography .label, #bibliography .citation-content|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

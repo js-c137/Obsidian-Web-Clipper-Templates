@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "Oxford Academic (OUP) Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:.al-author-name:nth-child(3) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{selector:.ww-citation-primary|split:\", Pages \"|first|split:\", \"|last|split:\" \"|last}}){% else %}{% if selector:.al-authors-list .al-author-name:nth-child(2) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-authors-list .al-author-name:nth-child(2) .linked-name|split:\" \"|last}} ({{selector:.ww-citation-primary|split:\", Pages \"|first|split:\", \"|last|split:\" \"|last}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{selector:.ww-citation-primary|split:\", Pages \"|first|split:\", \"|last|split:\" \"|last}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "triggers": ["academic.oup.com"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.al-author-name .linked-name}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{{selector:.ww-citation-primary|split:\"Pages \"|last|split:\",\"|first}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:section.abstract|remove_html:h2|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{selector:.kwd-group .kwd-main}}",
+      "type": "multitext"
+    },
+    {
+      "name": "date",
+      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
+      "type": "date"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/oup",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:section.abstract|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{content}}\n\n---\n\n## References\n\n{{selector:.ref-list .mixed-citation|join:\"\n\n\"}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

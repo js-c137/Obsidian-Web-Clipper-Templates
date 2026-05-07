@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "MDPI Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"-\"|first}}){% else %}{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} and {{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|last|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"-\"|first}}){% else %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"-\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "triggers": ["mdpi.com/"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{selector:h1}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "{{url|split:\"/\"|last}}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:citation_publication_date}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:#html-abstract .html-p|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{selector:#html-keywords .html-keywords-link}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/mdpi",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{selector:h1}}\n\n## Abstract\n\n{{selectorHtml:#html-abstract .html-p|markdown|trim}}\n\n## Keywords\n\n{{selector:#html-keywords .html-keywords-link|join:\", \"}}\n\n---\n\n## Article Content\n\n{{selectorHtml:#article-contents|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

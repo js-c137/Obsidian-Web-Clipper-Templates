@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "GeoScienceWorld Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:.al-author-name .linked-name|slice:2,3 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.al-author-name .linked-name|slice:1,2 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-author-name .linked-name|slice:1,2|join|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "triggers": ["pubs.geoscienceworld.org"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.al-author-name .linked-name}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{{selector:.ww-citation-primary|split:\": \"|last|split:\".\"|first}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:section.abstract|remove_html:h2|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "date",
+      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
+      "type": "date"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/gsw",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:section.abstract|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.article-body|remove_html:figure|markdown|trim}}\n\n---\n\n## References\n\n{{selector:.ref-list .ref-content|join:\"\n\n\"}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

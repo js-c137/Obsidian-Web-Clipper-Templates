@@ -2,7 +2,7 @@
   "schemaVersion": "0.1.0",
   "name": "AGU Article - Old Style",
   "behavior": "create",
-  "noteNameFormat": "{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}})",
+  "noteNameFormat": "{% if selector:.loa-authors-trunc li:nth-child(3) .author-name.accordion-tabbed__control %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} et al. ({{selector:.epub-date|split:\" \"|last}}){% else %}{% if selector:.loa-authors-trunc li:nth-child(2) .author-name.accordion-tabbed__control %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} and {{selector:.loa-authors-trunc li:nth-child(2) .author-name.accordion-tabbed__control|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% else %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% endif %}{% endif %}",
   "path": "Research/Literature",
   "triggers": ["agupubs.onlinelibrary.wiley.com/doi", "onlinelibrary.wiley.com/doi"],
   "properties": [

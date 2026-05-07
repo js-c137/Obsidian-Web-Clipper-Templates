@@ -2,7 +2,7 @@
   "schemaVersion": "0.1.0",
   "name": "ScienceDirect Article",
   "behavior": "create",
-  "noteNameFormat": "{{selector:.author-group .text.surname|first}} ({{selector:.publication-volume .text-xs|first|split:\", \"|slice:1,2|join|split:\" \"|last}})",
+  "noteNameFormat": "{% if selector:.author-group .text.surname|slice:2,3 %}{{selector:.author-group .text.surname|first}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.author-group .text.surname|slice:1,2 %}{{selector:.author-group .text.surname|first}} and {{selector:.author-group .text.surname|slice:1,2|join}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.author-group .text.surname|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
   "path": "Research/Literature",
   "triggers": ["sciencedirect.com/science/article", "schema:@Article"],
   "properties": [
@@ -28,8 +28,8 @@
 	},
 	{
 	  "name": "date",
-	  "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|slice:1,2|join}}",
-	  "type": "text"
+	  "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
+	  "type": "date"
 	},
 	{
 	  "name": "pages",
@@ -72,5 +72,5 @@
       "type": "multitext"
     }
   ],
-	"noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}\n\n---\n\n## Highlights\n\n{{selectorHtml:.abstract.author-highlights|first|remove_html:h2|markdown|trim}}\n\n---\n\n{{content}}\n\n---\n\n## Figures and Captions\n\n{{selectorHtml:.Body .figure.text-xs|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+	"noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}\n\n---\n\n## Highlights\n\n{{selectorHtml:.abstract.author-highlights|first|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.Body|remove_html:figure|remove_html:svg|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:.Body .figure.text-xs|join:\"\n\n\"|remove_html:ol|markdown|trim}}\n\n---\n\n## References\n\n{{selector:ol.references li|join:\"\n\n\"}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }
