@@ -1,7 +1,7 @@
 # 📎 Obsidian Web Clipper Templates
 ### Scientific Literature Capture for Marine Geophysics Research
 
-> Precision-engineered templates for clipping full-text scientific articles from **ScienceDirect**, **AGU/Wiley Online Library**, **Springer Nature**, **Science.org**, **GeoScienceWorld**, **Oxford Academic (OUP)**, and **MDPI** directly into Obsidian — with structured metadata, clean article content, and citation-ready references.
+> Precision-engineered templates for clipping full-text scientific articles from **ScienceDirect**, **AGU/Wiley Online Library**, **Springer Nature**, **Science.org**, **PNAS**, **GeoScienceWorld**, **Oxford Academic (OUP)**, and **MDPI** directly into Obsidian — with structured metadata, clean article content, and citation-ready references.
 
 ---
 
@@ -56,7 +56,9 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 | `abstract` | `.article-section__abstract .article-section__content\|first` | Scoped to exclude Plain Language Summary |
 | `keywords` | `.keywords .rlist--inline .badge-type` | Grandparent-scoped to avoid DOM duplicates |
 
-**Body sections:** Abstract → Plain Language Summary *(conditional — omitted if absent)* → Article Content (`.article-section__full .article-section__content` joined) → References (`.article-section__references ul` with `remove_html:div` to strip ADS/WoS/Scholar junk links)
+**Body sections:** Abstract → Plain Language Summary *(conditional — omitted if absent)* → Article Content (`.article-section__full .article-section__content` joined, with `remove_html:figure` to strip inline figures) → Figure Captions (`.figure figcaption` with `remove_html:a` to strip junk links) → References (`.article-section__references ul` with `remove_html:div` to strip ADS/WoS/Scholar junk links)
+
+**Author count detection:** Uses `|slice:2,3` to test for a third author — if the slice returns a value, `et al.` is used. Uses `|slice:1,2|first` to extract the second author's last name for the two-author format.
 
 **Filename format:** `Searle et al. (2018).md`
 
@@ -107,7 +109,32 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 
 ---
 
-### 5. `GeoScienceWorld Article`
+### 5. `PNAS Article`
+**Trigger:** `pnas.org/doi/`
+
+| Property | Source | Notes |
+|---|---|---|
+| `title` | `{{title}}` | Preset variable |
+| `authors` | `article header a[href^="#con"]` | Anchor links to contributor sections — same Highwire pattern as Science.org |
+| `journal` | `meta:name:citation_journal_title` | Meta tag |
+| `volume` | `meta:name:citation_volume` | Meta tag |
+| `issue` | `meta:name:citation_issue` | Meta tag |
+| `article_number` | `meta:name:citation_firstpage` | PNAS uses article numbers (e.g. `e2401440121`) stored in firstpage |
+| `published` | `article header .core-date-published` | e.g. `"June 25, 2024"` |
+| `doi` | `meta:name:citation_doi` | Meta tag |
+| `abstract` | `#abstract` with `remove_html:h2` | Full abstract text, heading stripped |
+
+**Body sections:** Significance (`#significance` with `remove_html:h2` — PNAS-specific plain-language significance statement) → Abstract → Article Content (`.core-container:has([role="doc-acknowledgments"])` with `remove_html:figure`) → References (`#bibliography .citation-content` joined)
+
+**Platform:** Highwire Press — same underlying platform as Science.org. Author anchors follow the `#con1`, `#con2`, `#con3` sequential pattern; `.core-date-published`, `.core-container`, `#bibliography`, and `#abstract` CSS identifiers are shared across both platforms.
+
+**Author count detection:** Same as Science.org — checks for `article header a[href="#con3"]` (3rd contributor anchor) then `a[href="#con2"]` for 1/2/3+ author branching.
+
+**Filename format:** `Smith et al. (2024).md`
+
+---
+
+### 6. `GeoScienceWorld Article`
 **Trigger:** `pubs.geoscienceworld.org`
 
 | Property | Source | Notes |
@@ -130,7 +157,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 
 ---
 
-### 6. `Oxford Academic (OUP) Article`
+### 7. `Oxford Academic (OUP) Article`
 **Trigger:** `academic.oup.com`
 
 | Property | Source | Notes |
@@ -154,7 +181,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 
 ---
 
-### 7. `MDPI Article`
+### 8. `MDPI Article`
 **Trigger:** `mdpi.com/`
 
 | Property | Source | Notes |
@@ -182,23 +209,24 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 
 ## Template Comparison
 
-| Feature | ScienceDirect | AGU/Wiley | Springer | Science.org | GSW | OUP | MDPI |
-|---|---|---|---|---|---|---|---|
-| Title | ✅ preset | ✅ preset | ✅ DOM selector | ✅ preset | ✅ preset | ✅ preset | ✅ DOM selector |
-| Authors (ordered) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Journal | ✅ | ✅ meta | ✅ meta | ✅ meta | ✅ meta | ✅ meta | ✅ meta |
-| Volume/Issue | ✅ split | ✅ combined | ✅ separate | ✅ combined | ✅ separate | ✅ separate | ✅ separate |
-| Published date | ✅ meta | ✅ DOM | ✅ DOM positional | ✅ DOM | ✅ meta | ✅ meta | ✅ meta |
-| DOI | ✅ DOM | ✅ meta | ✅ meta | ✅ DOM split | ✅ meta | ✅ meta | ✅ meta |
-| Abstract (full) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Keywords | ✅ | ✅ | ❌ not in HTML | ❌ | ❌ | ✅ | ✅ |
-| Highlights | ✅ | — | — | — | — | — | — |
-| Plain Language Summary | — | ✅ conditional | — | — | — | — | — |
-| Article Content | ✅ sections | ✅ sections | ✅ clean text | ✅ conditional | ✅ body | ✅ preset | ✅ full page |
-| Inline figures | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ HTTPS |
-| Separate figure list | ✅ | — | ✅ labels only | — | — | — | — |
-| References | ✅ | ✅ no junk links | ✅ with DOI | ✅ | ✅ | ✅ | ✅ numbered |
-| Filename format | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` |
+| Feature | ScienceDirect | AGU/Wiley | Springer | Science.org | PNAS | GSW | OUP | MDPI |
+|---|---|---|---|---|---|---|---|---|
+| Title | ✅ preset | ✅ preset | ✅ DOM selector | ✅ preset | ✅ preset | ✅ preset | ✅ preset | ✅ DOM selector |
+| Authors (ordered) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Journal | ✅ | ✅ meta | ✅ meta | ✅ meta | ✅ meta | ✅ meta | ✅ meta | ✅ meta |
+| Volume/Issue | ✅ split | ✅ combined | ✅ separate | ✅ combined | ✅ separate | ✅ separate | ✅ separate | ✅ separate |
+| Published date | ✅ meta | ✅ DOM | ✅ DOM positional | ✅ DOM | ✅ DOM | ✅ meta | ✅ meta | ✅ meta |
+| DOI | ✅ DOM | ✅ meta | ✅ meta | ✅ DOM split | ✅ meta | ✅ meta | ✅ meta | ✅ meta |
+| Abstract (full) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Keywords | ✅ | ✅ | ❌ not in HTML | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Highlights | ✅ | — | — | — | — | — | — | — |
+| Significance Statement | — | — | — | — | ✅ PNAS-specific | — | — | — |
+| Plain Language Summary | — | ✅ conditional | — | — | — | — | — | — |
+| Article Content | ✅ sections | ✅ sections | ✅ clean text | ✅ conditional | ✅ conditional | ✅ body | ✅ preset | ✅ full page |
+| Inline figures | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ HTTPS |
+| Separate figure list | ✅ | — | ✅ labels only | — | — | — | — | — |
+| References | ✅ | ✅ no junk links | ✅ with DOI | ✅ | ✅ | ✅ | ✅ | ✅ numbered |
+| Filename format | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` | `Surname (Year)` |
 
 ---
 
@@ -231,6 +259,8 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 
 - **AGU Plain Language Summary** — rendered conditionally using `{% if %}` logic. Requires Web Clipper ≥ v1.0.0.
 
+- **AGU figure images** — Wiley serves figure images at relative `/cms/asset/...` paths. The Web Clipper template system has no filter to prepend a base domain to relative URLs inside captured HTML, so embedded figure images cannot be made to load in Obsidian. The Figure Captions section captures the "Figure N" label and full caption text; the images themselves are excluded. This is the same fundamental limitation as Springer figure images.
+
 - **Springer citation links** — inline citation `<a>` tags carry multiline `title` attributes containing the full reference text, which break markdown link syntax. `strip_attr:title` removes all title attributes from the article content, which cleans up the links but also removes any other title-based tooltips.
 
 - **Springer figure images** — figure images are not rendered in the Figure Captions section due to parser limitations (injecting `https:` into `//`-prefixed protocol-relative URLs requires `split/join` after `|markdown`, a chain that causes empty output). Figures do appear inline in Article Content. As a workaround, add a CSS snippet to your vault to constrain figure image widths: `.markdown-preview-view img { max-width: 600px; }`.
@@ -240,6 +270,10 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 - **Springer keywords** — Springer Nature does not expose keywords in the HTML. This field is absent from the Springer template.
 
 - **Science.org article body** — uses a `has([role="doc-acknowledgments"])` CSS selector to target the main content container. If the article lacks an acknowledgments section, the template falls back to the `{{content}}` preset, which may include navigation and sidebar content.
+
+- **PNAS article body** — uses the same `.core-container:has([role="doc-acknowledgments"])` selector as Science.org, since both run on the Highwire Press platform. Articles without an acknowledgments section will produce an empty Article Content section — in that case, switch to the `{{content}}` preset as a fallback.
+
+- **PNAS Significance section** — most PNAS research articles include a Significance statement (`#significance`), but Brief Reports, Letters, and some other article types do not. If the Significance section is empty in the note, the `#significance` selector simply returns nothing; no error occurs.
 
 - **GeoScienceWorld / OUP pages** — extracted from the visible `.ww-citation-primary` citation string using `split/join` chaining. If the citation format changes (e.g. for Advance Articles without page numbers), the field may return an unexpected value.
 
@@ -260,6 +294,7 @@ obsidian-web-clipper-templates/
 ├── agu-article.json                   ← AGU / Wiley Online Library
 ├── springer-article.json              ← Springer Nature
 ├── science-org-article.json           ← Science / AAAS
+├── pnas-article.json                  ← PNAS / National Academy of Sciences
 ├── gsw-article.json                   ← GeoScienceWorld
 ├── oup-article.json                   ← Oxford Academic (OUP)
 ├── mdpi-article.json                  ← MDPI (all journals)
@@ -270,7 +305,7 @@ obsidian-web-clipper-templates/
 
 ## Vault Integration
 
-All templates save to `Research/Literature` and are designed for use with:
+All templates save to `Research/Literature/notes` and are designed for use with:
 
 - **Dataview** — all frontmatter fields are typed correctly (`text`, `multitext`, `date`) for querying
 - **Zotero / Citations plugin** — `doi` field enables citekey linking; filename format `Surname (Year)` matches common citekey conventions
@@ -280,7 +315,7 @@ Example Dataview query to list unread papers by journal:
 
 ```dataview
 TABLE authors, journal, published, doi
-FROM "Research/Literature"
+FROM "Research/Literature/notes"
 WHERE status = "unread"
 SORT published DESC
 ```
@@ -310,4 +345,4 @@ Key techniques used:
 
 ---
 
-*Templates tested on: Marine Geology, Geochemistry Geophysics Geosystems, Geophysical Research Letters, Journal of Geophysical Research, Earth and Planetary Science Letters, Journal of Marine Science and Engineering — May 2026*
+*Templates tested on: Marine Geology, Geochemistry Geophysics Geosystems, Geophysical Research Letters, Journal of Geophysical Research, Earth and Planetary Science Letters, Journal of Marine Science and Engineering, Proceedings of the National Academy of Sciences — May 2026*

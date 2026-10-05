@@ -3,7 +3,7 @@
   "name": "ScienceDirect Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:.author-group .text.surname|slice:2,3 %}{{selector:.author-group .text.surname|first}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.author-group .text.surname|slice:1,2 %}{{selector:.author-group .text.surname|first}} and {{selector:.author-group .text.surname|slice:1,2|join}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.author-group .text.surname|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature",
+  "path": "Research/Literature/notes",
   "triggers": ["sciencedirect.com/science/article", "schema:@Article"],
   "properties": [
     {

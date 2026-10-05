@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "Frontiers Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if meta:name:citation_author|slice:2,3 %}{{meta:name:citation_author|first|split:\", \"|first}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if meta:name:citation_author|slice:1,2 %}{{meta:name:citation_author|first|split:\", \"|first}} and {{meta:name:citation_author|slice:1,2|last|split:\", \"|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{meta:name:citation_author|first|split:\", \"|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature/notes",
+  "triggers": ["frontiersin.org/articles", "frontiersin.org/journals"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{meta:name:citation_author}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "date",
+      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
+      "type": "date"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:.Abstract|first|remove_html:h2|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{selector:.Keywords a}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/frontiers",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.Abstract|first|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.ArticleContent|first|remove_html:figure|remove_html:svg|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:figure figcaption|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.References|first|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

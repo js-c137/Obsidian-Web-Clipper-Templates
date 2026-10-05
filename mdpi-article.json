@@ -3,7 +3,7 @@
   "name": "MDPI Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"-\"|first}}){% else %}{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} and {{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|last|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"-\"|first}}){% else %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"-\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature",
+  "path": "Research/Literature/notes",
   "triggers": ["mdpi.com/"],
   "properties": [
     {

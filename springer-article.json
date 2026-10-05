@@ -3,7 +3,7 @@
   "name": "Springer Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:.c-article-author-list__item:nth-child(3) > a %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.c-article-author-list__item:nth-child(2) > a %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} and {{selector:.c-article-author-list__item:nth-child(2) > a|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature",
+  "path": "Research/Literature/notes",
   "triggers": ["link.springer.com/article", "springer.com/article"],
   "properties": [
     {

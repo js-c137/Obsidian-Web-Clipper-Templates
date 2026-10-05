@@ -2,9 +2,11 @@
   "schemaVersion": "0.1.0",
   "name": "Oxford Academic (OUP) Article",
   "behavior": "create",
-  "noteNameFormat": "{% if selector:.al-author-name:nth-child(3) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{selector:.ww-citation-primary|split:\", Pages \"|first|split:\", \"|last|split:\" \"|last}}){% else %}{% if selector:.al-authors-list .al-author-name:nth-child(2) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-authors-list .al-author-name:nth-child(2) .linked-name|split:\" \"|last}} ({{selector:.ww-citation-primary|split:\", Pages \"|first|split:\", \"|last|split:\" \"|last}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{selector:.ww-citation-primary|split:\", Pages \"|first|split:\", \"|last|split:\" \"|last}}){% endif %}{% endif %}",
-  "path": "Research/Literature",
-  "triggers": ["academic.oup.com"],
+  "noteNameFormat": "{% set year = selector:.ww-citation-primary|replace:\"/^.*?, (?!Volume |Issue )(?:[A-Za-z]+ )?((?:19|20)[0-9]{2}),.*$/\":\"$1\" %}{% if year contains \",\" %}{% set year = meta:name:citation_publication_date|split:\"/\"|first %}{% endif %}{% if selector:.al-author-name:nth-child(3) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{year}}){% elseif selector:.al-authors-list .al-author-name:nth-child(2) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-authors-list .al-author-name:nth-child(2) .linked-name|split:\" \"|last}} ({{year}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{year}}){% endif %}",
+  "path": "Research/Literature/notes",
+  "triggers": [
+    "academic.oup.com"
+  ],
   "properties": [
     {
       "name": "title",
@@ -33,7 +35,7 @@
     },
     {
       "name": "pages",
-      "value": "{{selector:.ww-citation-primary|split:\"Pages \"|last|split:\",\"|first}}",
+      "value": "{% set pg = selector:.ww-citation-primary|replace:\"/^.*?, (?!Volume |Issue )(?:[A-Za-z]+ )?(?:19|20)[0-9]{2}, (?:Pages )?([^,]+),.*$/\":\"$1\" %}{% if not (pg contains \",\") %}{{pg}}{% endif %}",
       "type": "text"
     },
     {
@@ -48,7 +50,7 @@
     },
     {
       "name": "abstract",
-      "value": "{{selectorHtml:section.abstract|remove_html:h2|markdown|trim}}",
+      "value": "{{selectorHtml:section.abstract|remove_html:h2|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\"|trim}}",
       "type": "text"
     },
     {
@@ -77,5 +79,5 @@
       "type": "multitext"
     }
   ],
-  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:section.abstract|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{content}}\n\n---\n\n## References\n\n{{selector:.ref-list .mixed-citation|join:\"\n\n\"}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:section.abstract|remove_html:h2|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\"|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.widget-ArticleFulltext .widget-items|remove_html:\".abstract-title,section.abstract,.article-metadata-panel,.figure-title,.fig-section,.table-full-width-wrap,.table-wrap,.backreferences-title,.ref-list,.widget-ArticlePubStateInfo,.copyright-statement,.license,mjx-math\"|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\"|trim}}\n\n{% if selector:.widget-ArticleFulltext .fig-section %}---\n\n## Figures\n\n{{selectorHtml:.widget-ArticleFulltext .fig-section|join:\"\n\"|remove_html:\".figure-button-wrap\"|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\",\"/(!\\\\[[^\\\\]]*\\\\]\\\\([^)\\\\s]*\\\\))\\\\s*Figure ([0-9A-Z]+)\\\\.\\\\s*/g\":\"### Figure $2\\n\\n$1\\n\\n\"|trim}}\n\n{% endif %}{% if selector:.widget-ArticleFulltext .table-wrap %}---\n\n## Tables\n\n{{selectorHtml:.widget-ArticleFulltext .table-wrap|join:\"\n\"|remove_html:\".table-open-button-wrap,.table-modal\"|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\",\"/^Table ([0-9A-Z]+)\\\\.[ \\\\t]*$/gm\":\"### Table $1\"|trim}}\n\n{% endif %}---\n\n## References\n\n{{selectorHtml:.ref-list .mixed-citation|join:\"\\n\\n\"|remove_html:\".citation-links\"|strip_tags|replace:\"/[ \\\\t\\\\u00a0]+/g\":\" \",\"/ +([,.;:])/g\":\"$1\",\"/(?<![\\\\/\\\\w])(10\\\\.[0-9]{4,9}\\\\/)/g\":\" https://doi.org/$1\",\"/ {2,}/g\":\" \",\"/ *\\\\n */g\":\"\\n\",\"/\\\\n{3,}/g\":\"\\n\\n\"|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }

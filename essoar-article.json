@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "ESSOAr Preprint",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:.core-author-link|slice:2,3 %}{{meta:name:citation_author|first|split:\", \"|first}} et al. ({{meta:name:citation_online_date|split:\"/\"|first}}){% else %}{% if selector:.core-author-link|slice:1,2 %}{{meta:name:citation_author|first|split:\", \"|first}} and {{meta:name:citation_author|slice:1,2|first|split:\", \"|first}} ({{meta:name:citation_online_date|split:\"/\"|first}}){% else %}{{meta:name:citation_author|first|split:\", \"|first}} ({{meta:name:citation_online_date|split:\"/\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature/notes",
+  "triggers": ["essopenarchive.org/doi"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{meta:name:citation_title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{meta:name:citation_author}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "ESS Open Archive (preprint)",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:citation_online_date}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:[role=\"doc-abstract\"]|remove_html:h2|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/preprint/essoar",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n> [!info] Preprint, not peer reviewed\n> This is an ESSOAr preprint. Full text is not available as HTML on this page, only the abstract below. The manuscript PDF is at: {{meta:name:citation_pdf_url}}\n\n## Abstract\n\n{{selectorHtml:[role=\"doc-abstract\"]|remove_html:h2|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

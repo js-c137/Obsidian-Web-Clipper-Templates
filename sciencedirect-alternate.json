@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "ScienceDirect Article - Alternate",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:#author-group .surname|first %}{{selector:#author-group .surname|first}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{meta:name:citation_title|slice:0,20}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}",
+  "path": "Research/Literature/notes",
+  "triggers": [
+    "sciencedirect.com/science/article",
+    "schema:@Article"
+  ],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{meta:name:citation_title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:#author-group .react-xocs-alternative-link}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "date",
+      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
+      "type": "date"
+    },
+    {
+      "name": "pages",
+      "value": "{{meta:name:citation_firstpage}}{% if meta:name:citation_lastpage %}-{{meta:name:citation_lastpage}}{% endif %}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:#abstracts > .abstract.author:not(.author-highlights)|first|remove_html:h2|remove_html:math|remove_html:msub|remove_html:mrow|remove_html:mi|remove_html:mn|remove_html:mo|remove_html:mspace|remove_html:mfenced|remove_html:mtext|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{selector:.keywords-section .keyword}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/sciencedirect",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{meta:name:citation_title}}\n\n## Abstract\n\n{{selectorHtml:#abstracts > .abstract.author:not(.author-highlights)|first|remove_html:h2|remove_html:math|remove_html:msub|remove_html:mrow|remove_html:mi|remove_html:mn|remove_html:mo|remove_html:mspace|remove_html:mfenced|remove_html:mtext|markdown|trim}}\n\n---\n\n## Highlights\n\n{{selectorHtml:.abstract.author-highlights|first|remove_html:h2|remove_html:math|remove_html:msub|remove_html:mrow|remove_html:mi|remove_html:mn|remove_html:mo|remove_html:mspace|remove_html:mfenced|remove_html:mtext|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:#body|first|remove_html:figure|remove_html:math|remove_html:msub|remove_html:mrow|remove_html:mi|remove_html:mn|remove_html:mo|remove_html:mspace|remove_html:mfenced|remove_html:mtext|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:figure .captions|join:\"\n\n\"|remove_html:math|remove_html:msub|remove_html:mrow|remove_html:mi|remove_html:mn|remove_html:mo|remove_html:mspace|remove_html:mfenced|remove_html:mtext|markdown|trim}}\n\n---\n\n## References\n\n{{selector:.reference|join:\"\n\n\"}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

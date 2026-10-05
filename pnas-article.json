@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "PNAS Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:article header a[href=\"#con3\"] %}{{selector:article header a[href=\"#con1\"]|first|split:\" \"|last}} et al. ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{% if selector:article header a[href=\"#con2\"] %}{{selector:article header a[href=\"#con1\"]|first|split:\" \"|last}} and {{selector:article header a[href=\"#con2\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{{selector:article header a[href=\"#con1\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% endif %}{% endif %}",
+  "path": "Research/Literature/notes",
+  "triggers": ["pnas.org/doi/"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:article header a[href^=\"#con\"]}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "{{meta:name:citation_firstpage}}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{selector:article header .core-date-published}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:#abstract|remove_html:h2|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/pnas",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n## Significance\n\n{{selectorHtml:article > [role=\"doc-abstract\"]:not(#abstract)|remove_html:h2|markdown|trim}}\n\n## Abstract\n\n{{selectorHtml:#abstract|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.core-container:not(:has([role=\"doc-acknowledgments\"]))|remove_html:figure|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:#bibliography|remove_html:h2|remove_html:button|remove_html:menu|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

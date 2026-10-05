@@ -3,7 +3,7 @@
   "name": "Science.org Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:article header a[href=\"#con3\"] %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} et al. ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{% if selector:article header a[href=\"#con2\"] %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} and {{selector:a[href=\"#con2\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% endif %}{% endif %}",
-  "path": "Research/Literature",
+  "path": "Research/Literature/notes",
   "triggers": ["science.org/doi"],
   "properties": [
     {

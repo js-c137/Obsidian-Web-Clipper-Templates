@@ -2,8 +2,8 @@
   "schemaVersion": "0.1.0",
   "name": "AGU Article",
   "behavior": "create",
-  "noteNameFormat": "{% if selector:.loa-authors-trunc li:nth-child(3) .author-name.accordion-tabbed__control %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} et al. ({{selector:.epub-date|split:\" \"|last}}){% else %}{% if selector:.loa-authors-trunc li:nth-child(2) .author-name.accordion-tabbed__control %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} and {{selector:.loa-authors-trunc li:nth-child(2) .author-name.accordion-tabbed__control|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% else %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% endif %}{% endif %}",
-  "path": "Research/Literature",
+  "noteNameFormat": "{% if selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:2,3 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} et al. ({{selector:.epub-date|split:\" \"|last}}){% else %}{% if selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:1,2 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} and {{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:1,2|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% else %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% endif %}{% endif %}",
+  "path": "Research/Literature/notes",
   "triggers": ["agupubs.onlinelibrary.wiley.com/doi", "onlinelibrary.wiley.com/doi"],
   "properties": [
     {
@@ -67,5 +67,5 @@
       "type": "multitext"
     }
   ],
-  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.article-section__abstract .article-section__content|first|markdown|trim}}\n\n---\n\n{% if selectorHtml:.article-section__content.synopsis %}## Plain Language Summary\n\n{{selectorHtml:.article-section__content.synopsis|markdown|trim}}\n\n---\n\n{% endif %}## Article Content\n\n{{selectorHtml:.article-section__full .article-section__content|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.article-section__references ul|remove_html:div|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.article-section__abstract .article-section__content|first|markdown|trim}}\n\n---\n\n{% if selectorHtml:.article-section__content.synopsis %}## Plain Language Summary\n\n{{selectorHtml:.article-section__content.synopsis|markdown|trim}}\n\n---\n\n{% endif %}## Article Content\n\n{{selectorHtml:.article-section__full .article-section__content|join:\"\n\n\"|remove_html:figure|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:.figure figcaption|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.article-section__references ul|remove_html:div|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }

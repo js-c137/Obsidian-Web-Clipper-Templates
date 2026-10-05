@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "Copernicus / EGU Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if meta:name:citation_author|slice:2,3 %}{{meta:name:citation_author|first|split:\", \"|first}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if meta:name:citation_author|slice:1,2 %}{{meta:name:citation_author|first|split:\", \"|first}} and {{meta:name:citation_author|slice:1,2|first|split:\", \"|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{meta:name:citation_author|first|split:\", \"|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature/notes",
+  "triggers": ["copernicus.org/articles", "egusphere.copernicus.org/preprints"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{meta:name:citation_title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{meta:name:citation_author}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume_issue",
+      "value": "{{meta:name:citation_volume}} ({{meta:name:citation_issue}}), pp. {{meta:name:citation_firstpage}}-{{meta:name:citation_lastpage}}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:citation_publication_date}}",
+      "type": "text"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:.abstract|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/egu-copernicus",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n> [!info] Full text not on page\n> Copernicus journal pages show only the abstract, the full article is a separate PDF: {{meta:name:citation_pdf_url}}\n\n## Abstract\n\n{{selectorHtml:.abstract|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}

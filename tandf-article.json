@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "Taylor & Francis Article",
+  "behavior": "create",
+  "noteNameFormat": "{% if selector:.NLM_contrib-group .contribDegrees:nth-child(3) %}{{meta:name:dc.Creator|first|split:\" \"|last}} et al. ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% else %}{% if selector:.NLM_contrib-group .contribDegrees:nth-child(2) %}{{meta:name:dc.Creator|first|split:\" \"|last}} and {{meta:name:dc.Creator|slice:1,2|first|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% else %}{{meta:name:dc.Creator|first|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "triggers": ["tandfonline.com/doi/full", "tandfonline.com/doi/abs"],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.NLM_contrib-group a.author}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{selector:.issue-heading|split:\"Volume \"|last|split:\",\"|first}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{selector:.issue-heading|split:\"Issue \"|last|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{{meta:name:citation_firstpage}}-{{meta:name:citation_lastpage}}",
+      "type": "text"
+    },
+    {
+      "name": "date",
+      "value": "{{meta:name:dc.Date}}",
+      "type": "date"
+    },
+    {
+      "name": "doi",
+      "value": "{{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|slice:1|join:\"/\"}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:.hlFld-Abstract|remove_html:h2|markdown|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{meta:name:dc.Subject|split:\"; \"}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/tandf",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.hlFld-Abstract|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.hlFld-Fulltext|remove_html:figure|remove_html:svg|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:ul.references|remove_html:div|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}
