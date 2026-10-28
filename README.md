@@ -105,7 +105,7 @@ One template covers both current AGU papers and early-2000s papers: Wiley serves
 | `volume` | `meta:name:citation_volume` | Separate meta tag |
 | `issue` | `meta:name:citation_issue` | Separate meta tag |
 | `article_number` | `meta:name:citation_firstpage` | Springer uses article numbers, not page ranges |
-| `published` | `.c-article-identifiers li:nth-child(3) time` | Third item in identifiers list = Published date |
+| `published` | `meta:name:dc.date` | Online publication date (= "Published" on the page) |
 | `doi` | `meta:name:citation_doi` | Clean DOI without URL prefix |
 | `abstract` | `#Abs1-section .c-article-section__content` with `remove_html:figure` | Strips graphical abstract image and AI alt-text block |
 
@@ -303,7 +303,7 @@ Each template has a `triggers` list. The Web Clipper treats a plain-text trigger
 
 - **Springer figure images** — figure images are not rendered in the Figure Captions section due to parser limitations (injecting `https:` into `//`-prefixed protocol-relative URLs requires `split/join` after `|markdown`, a chain that causes empty output). Figures do appear inline in Article Content. As a workaround, add a CSS snippet to your vault to constrain figure image widths: `.markdown-preview-view img { max-width: 600px; }`.
 
-- **Springer published date** — uses positional selector `.c-article-identifiers li:nth-child(3)` which assumes "Published" is always the third item in the identifiers list. Articles without a "Received" or "Accepted" entry may return the wrong value — inspect and adjust the index if needed.
+- **Springer pages vs article number** — `citation_firstpage` holds the first page for paginated articles and the article number otherwise. `pages` is filled only when `citation_lastpage` exists; `article_number` only when it does not.
 
 - **Springer keywords** — Springer Nature does not expose keywords in the HTML. This field is absent from the Springer template.
 

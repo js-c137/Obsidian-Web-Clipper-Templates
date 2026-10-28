@@ -35,12 +35,12 @@
     },
     {
       "name": "pages",
-      "value": "",
+      "value": "{% if meta:name:citation_lastpage %}{{meta:name:citation_firstpage}}-{{meta:name:citation_lastpage}}{% endif %}",
       "type": "text"
     },
     {
       "name": "article_number",
-      "value": "{{meta:name:citation_firstpage}}",
+      "value": "{% if not meta:name:citation_lastpage %}{{meta:name:citation_firstpage}}{% endif %}",
       "type": "text"
     },
     {

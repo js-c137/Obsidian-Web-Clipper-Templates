@@ -35,7 +35,7 @@
     },
     {
       "name": "pages",
-      "value": "{{meta:name:citation_firstpage}}-{{meta:name:citation_lastpage}}",
+      "value": "{% if meta:name:citation_lastpage %}{{meta:name:citation_firstpage}}-{{meta:name:citation_lastpage}}{% endif %}",
       "type": "text"
     },
     {

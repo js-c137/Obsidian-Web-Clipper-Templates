@@ -38,6 +38,7 @@ All templates use `schemaVersion: "0.1.0"` and share this output structure:
 ## Key Template Techniques
 
 - **Triggers are regex** (`/^https?:\/\/(www\.)?host\/path\//`). The Clipper matches a plain-text trigger as a prefix of the full URL, so `mdpi.com/` never matches `https://www.mdpi.com/...`. Plain triggers are checked first, then regex triggers in template-list order; no match falls back to the top template. Avoid `schema:@Article` (too broad). `sciencedirect-alternate.json` has an empty trigger (manual only).
+- **Pages vs article number** (AGU, IOP, PNAS, Springer, T&F): `citation_firstpage` is a first page when `citation_lastpage` exists, otherwise an article number. `pages` = `{% if meta:name:citation_lastpage %}first-last{% endif %}`; `article_number` = `{% if not meta:name:citation_lastpage %}first{% endif %}`. MDPI takes its article number from the URL.
 - `meta:name:citation_*` tags preferred over DOM selectors — more stable across redesigns
 - `remove_html:figure`, `remove_html:div`, `remove_html:h2`, `remove_html:svg` for content cleanup
 - `strip_attr:title` on Springer article content — citation `<a>` tags carry multiline `title` attributes that break markdown link syntax
@@ -53,7 +54,7 @@ All templates use `schemaVersion: "0.1.0"` and share this output structure:
 
 **AGU/Wiley:** `.loa-authors-trunc` may truncate large author lists. Early-2000s and current papers share the same Wiley layout (checked Oct 2026: GRL 2002 and 2025), so `agu-article.json` covers both; `agu-article-old-style.json` was removed (Oct 2026). `remove_html` deletes the element *with its text*: the old template's `remove_html:span` removed in-text citations (they sit in plain `<span>`), and its `li:nth-child(2)` author check never matched. Only `.paraNumber` spans are removed now. References use `remove_html:div` to strip ADS/WoS/Scholar junk links.
 
-**Springer:** Title extracted via `selector:.c-article-title` (not `{{title}}` preset — preset appends journal name). Published date uses positional `li:nth-child(3)` — may need adjustment for articles missing Received/Accepted dates.
+**Springer:** Title extracted via `selector:.c-article-title` (not `{{title}}` preset — preset appends journal name). Published date from `meta:name:dc.date` (the old positional `.c-article-identifiers li:nth-child(3) time` now hits "Volume 47, article number 43 (2026)" and returned nothing). Pages vs article number: `citation_firstpage` is the first page when `citation_lastpage` exists, otherwise the article number; `pages` / `article_number` use `{% if %}` / `{% if not %}` on `citation_lastpage`. Checked Oct 2026 on Marine Geophysical Research 37:1-20 (2016) and 47:43 (2026).
 
 **Science.org:** Article body selector `has([role="doc-acknowledgments"])` falls back to `{{content}}` preset if no acknowledgments section exists.
 
@@ -65,7 +66,7 @@ All templates use `schemaVersion: "0.1.0"` and share this output structure:
 - Abstract: `.hlFld-Abstract` ✅. `.abstractSection` does not exist on T&F pages.
 - Keywords: `meta:name:dc.Subject|split:"; "` ✅.
 - Volume/issue: Parsed from `.issue-heading` text node — `split:"Volume "|last|split:","|first` and `split:"Issue "|last|trim`.
-- Pages: Not in any static meta tag or DOM element; field will be empty (produces bare `-`).
+- Pages: Not in any static meta tag or DOM element; field stays empty (conditional on `citation_lastpage`, so no bare `-`).
 - Article body: `.hlFld-Fulltext` ✅.
 - References: `ul.references` — the bibliography `<ul class="references numeric-ordered-list">` is in the DOM. Uses `remove_html:div` to strip `.extra-links` (WoS/Scholar buttons). Avoid `#references-Section1` — the `#` in template syntax is problematic.
 

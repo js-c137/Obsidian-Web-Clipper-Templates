@@ -35,17 +35,17 @@
     },
     {
       "name": "pages",
-      "value": "",
+      "value": "{% if meta:name:citation_lastpage %}{{meta:name:citation_firstpage}}-{{meta:name:citation_lastpage}}{% endif %}",
       "type": "text"
     },
     {
       "name": "article_number",
-      "value": "{{meta:name:citation_firstpage}}",
+      "value": "{% if not meta:name:citation_lastpage %}{{meta:name:citation_firstpage}}{% endif %}",
       "type": "text"
     },
     {
       "name": "published",
-      "value": "{{selector:.c-article-identifiers li:nth-child(3) time|date:\"YYYY-MM-DD\"}}",
+      "value": "{{meta:name:dc.date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {
