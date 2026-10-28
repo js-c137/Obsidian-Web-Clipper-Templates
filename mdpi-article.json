@@ -2,18 +2,20 @@
   "schemaVersion": "0.1.0",
   "name": "MDPI Article",
   "behavior": "create",
-  "noteNameFormat": "{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"-\"|first}}){% else %}{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} and {{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|last|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"-\"|first}}){% else %}{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"-\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["mdpi.com/"],
+  "noteNameFormat": "{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:.art-authors .profile-card-drop|first|trim|split:\" \"|last}} et al. ({{meta:name:dc.date|split:\"-\"|first}}){% else %}{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:.art-authors .profile-card-drop|first|trim|split:\" \"|last}} and {{selector:.art-authors .profile-card-drop|last|trim|split:\" \"|last}} ({{meta:name:dc.date|split:\"-\"|first}}){% else %}{{selector:.art-authors .profile-card-drop|first|trim|split:\" \"|last}} ({{meta:name:dc.date|split:\"-\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/(www\\.)?mdpi\\.com\\/\\d{4}-\\d{3}[\\dX]\\//"
+  ],
   "properties": [
     {
       "name": "title",
-      "value": "{{selector:h1}}",
+      "value": "{{meta:name:citation_title}}",
       "type": "text"
     },
     {
       "name": "authors",
-      "value": "{{selector:span[itemprop=\"author\"] span[itemprop=\"name\"]}}",
+      "value": "{{selector:.art-authors .profile-card-drop}}",
       "type": "multitext"
     },
     {
@@ -32,14 +34,19 @@
       "type": "text"
     },
     {
+      "name": "pages",
+      "value": "",
+      "type": "text"
+    },
+    {
       "name": "article_number",
       "value": "{{url|split:\"/\"|last}}",
       "type": "text"
     },
     {
       "name": "published",
-      "value": "{{meta:name:citation_publication_date}}",
-      "type": "text"
+      "value": "{{meta:name:dc.date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
     },
     {
       "name": "doi",
@@ -52,18 +59,23 @@
       "type": "text"
     },
     {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
       "name": "abstract",
-      "value": "{{selectorHtml:#html-abstract .html-p|markdown|trim}}",
+      "value": "{{selectorHtml:#html-abstract .html-p:not(section[type=\"highlights\"] .html-p)|remove_html:\"nobr,.MathJax_Preview\"|markdown|trim}}",
       "type": "text"
     },
     {
       "name": "keywords",
-      "value": "{{selector:#html-keywords .html-keywords-link}}",
+      "value": "{{meta:name:dc.subject}}",
       "type": "multitext"
     },
     {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {
@@ -77,5 +89,5 @@
       "type": "multitext"
     }
   ],
-  "noteContentFormat": "# {{selector:h1}}\n\n## Abstract\n\n{{selectorHtml:#html-abstract .html-p|markdown|trim}}\n\n## Keywords\n\n{{selector:#html-keywords .html-keywords-link|join:\", \"}}\n\n---\n\n## Article Content\n\n{{selectorHtml:#article-contents|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{meta:name:citation_title}}\n\n## Abstract\n\n{{selectorHtml:#html-abstract .html-p:not(section[type=\"highlights\"] .html-p)|remove_html:\"nobr,.MathJax_Preview\"|markdown|trim}}\n\n{% if selectorHtml:#html-abstract section[type=\"highlights\"] %}## Highlights\n\n{{selectorHtml:#html-abstract section[type=\"highlights\"]|remove_html:\"h2\"|markdown|trim}}\n\n{% endif %}## Keywords\n\n{{meta:name:dc.subject|join:\", \"}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.html-body|remove_html:\"nobr,.MathJax_Preview\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:#html-references_list ol|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }

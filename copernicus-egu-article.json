@@ -3,8 +3,10 @@
   "name": "Copernicus / EGU Article",
   "behavior": "create",
   "noteNameFormat": "{% if meta:name:citation_author|slice:2,3 %}{{meta:name:citation_author|first|split:\", \"|first}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if meta:name:citation_author|slice:1,2 %}{{meta:name:citation_author|first|split:\", \"|first}} and {{meta:name:citation_author|slice:1,2|first|split:\", \"|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{meta:name:citation_author|first|split:\", \"|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["copernicus.org/articles", "egusphere.copernicus.org/preprints"],
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/[a-z0-9-]+\\.copernicus\\.org\\/(articles|preprints)\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -22,23 +24,33 @@
       "type": "text"
     },
     {
-      "name": "volume_issue",
-      "value": "{{meta:name:citation_volume}} ({{meta:name:citation_issue}}), pp. {{meta:name:citation_firstpage}}-{{meta:name:citation_lastpage}}",
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{{meta:name:citation_firstpage}}{% if meta:name:citation_lastpage %}-{{meta:name:citation_lastpage}}{% endif %}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "",
       "type": "text"
     },
     {
       "name": "published",
-      "value": "{{meta:name:citation_publication_date}}",
-      "type": "text"
+      "value": "{{meta:name:citation_publication_date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
     },
     {
       "name": "doi",
       "value": "{{meta:name:citation_doi}}",
-      "type": "text"
-    },
-    {
-      "name": "pdf_url",
-      "value": "{{meta:name:citation_pdf_url}}",
       "type": "text"
     },
     {
@@ -47,13 +59,23 @@
       "type": "text"
     },
     {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
       "name": "abstract",
       "value": "{{selectorHtml:.abstract|markdown|trim}}",
       "type": "text"
     },
     {
+      "name": "keywords",
+      "value": "",
+      "type": "multitext"
+    },
+    {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {

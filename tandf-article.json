@@ -4,7 +4,9 @@
   "behavior": "create",
   "noteNameFormat": "{% if selector:.NLM_contrib-group .contribDegrees:nth-child(3) %}{{meta:name:dc.Creator|first|split:\" \"|last}} et al. ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% else %}{% if selector:.NLM_contrib-group .contribDegrees:nth-child(2) %}{{meta:name:dc.Creator|first|split:\" \"|last}} and {{meta:name:dc.Creator|slice:1,2|first|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% else %}{{meta:name:dc.Creator|first|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% endif %}{% endif %}",
   "path": "Research/Literature",
-  "triggers": ["tandfonline.com/doi/full", "tandfonline.com/doi/abs"],
+  "triggers": [
+    "/^https?:\\/\\/(www\\.)?tandfonline\\.com\\/doi\\/(full|abs)\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -37,8 +39,13 @@
       "type": "text"
     },
     {
-      "name": "date",
-      "value": "{{meta:name:dc.Date}}",
+      "name": "article_number",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:dc.Date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {
@@ -49,6 +56,11 @@
     {
       "name": "source_url",
       "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "",
       "type": "text"
     },
     {
@@ -63,7 +75,7 @@
     },
     {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {

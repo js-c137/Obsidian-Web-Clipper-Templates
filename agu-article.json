@@ -3,8 +3,10 @@
   "name": "AGU Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:2,3 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} et al. ({{selector:.epub-date|split:\" \"|last}}){% else %}{% if selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:1,2 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} and {{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:1,2|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% else %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["agupubs.onlinelibrary.wiley.com/doi", "onlinelibrary.wiley.com/doi"],
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/([a-z0-9-]+\\.)?onlinelibrary\\.wiley\\.com\\/doi\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -22,14 +24,29 @@
       "type": "text"
     },
     {
-      "name": "volume_issue",
-      "value": "{{selector:.volume-issue|first}}",
+      "name": "volume",
+      "value": "{{selector:.volume-issue|first|split:\"Volume \"|last|split:\",\"|first|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{selector:.volume-issue|first|split:\"Issue \"|last|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "{{meta:name:citation_firstpage}}",
       "type": "text"
     },
     {
       "name": "published",
-      "value": "{{selector:.epub-date}}",
-      "type": "text"
+      "value": "{{selector:.epub-date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
     },
     {
       "name": "doi",
@@ -39,6 +56,11 @@
     {
       "name": "source_url",
       "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
       "type": "text"
     },
     {
@@ -53,7 +75,7 @@
     },
     {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {
@@ -67,5 +89,5 @@
       "type": "multitext"
     }
   ],
-  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.article-section__abstract .article-section__content|first|markdown|trim}}\n\n---\n\n{% if selectorHtml:.article-section__content.synopsis %}## Plain Language Summary\n\n{{selectorHtml:.article-section__content.synopsis|markdown|trim}}\n\n---\n\n{% endif %}## Article Content\n\n{{selectorHtml:.article-section__full .article-section__content|join:\"\n\n\"|remove_html:figure|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:.figure figcaption|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.article-section__references ul|remove_html:div|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.article-section__abstract .article-section__content|first|markdown|trim}}\n\n---\n\n{% if selectorHtml:.article-section__content.synopsis %}## Plain Language Summary\n\n{{selectorHtml:.article-section__content.synopsis|markdown|trim}}\n\n---\n\n{% endif %}## Article Content\n\n{{selectorHtml:.article-section__full .article-section__content|join:\"\n\n\"|remove_html:figure|remove_html:\".paraNumber\"|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:.figure figcaption|join:\"\n\n\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:.article-section__references ul|remove_html:div|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }

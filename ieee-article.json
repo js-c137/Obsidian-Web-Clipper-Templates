@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "IEEE Xplore Article",
+  "behavior": "create",
+  "noteContentFormat": "## Abstract\n\n{% if selectorHtml:.owc-ieee-abstract %}{{selectorHtml:.owc-ieee-abstract|markdown|trim}}{% else %}{{selector:.abstract-desktop-div .abstract-text-content|trim}}{% endif %}\n\n## Article Content\n\n{% if selectorHtml:.owc-ieee-body %}{{selectorHtml:.owc-ieee-body|remove_html:\".figure\"|markdown|trim}}{% else %}{{selectorHtml:.document-text|remove_html:\".figure,.kicker,.MathJax_Preview,.link\"|markdown|trim}}{% endif %}\n\n## References\n\n{% if selectorHtml:.owc-ieee-references %}{{selectorHtml:.owc-ieee-references|markdown|trim}}{% else %}{{selector:.reference-container .text-break > div:first-child|list:numbered}}{% endif %}\n\n## My Notes\n\n",
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{selector:h1.document-title|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.authors-info-container > .authors-info .blue-tooltip a > span}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{selector:.u-pb-1.stats-document-abstract-publishedIn > a|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{selector:.u-pb-1.stats-document-abstract-publishedIn > span > span:first-child|replace:\"Volume:\":\"\"|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{selector:a.stats-document-abstract-publishedIn-issue|replace:\"Issue:\":\"\"|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{{selector:.abstract-desktop-div .row > .col-6:first-child > .u-pb-1:first-child|replace:\"Page(s):\":\"\"|replace:\"Article Sequence Number:\":\"\"|replace:\" \":\"\"|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{selector:.u-pb-1.stats-document-abstract-publishedIn|split:\", \"|last|replace:\")\":\"\"|trim|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "doi",
+      "value": "{{selector:.stats-document-abstract-doi a|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selector:.abstract-desktop-div .abstract-text-content|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{meta:name:citation_keywords}}",
+      "type": "multitext"
+    },
+    {
+      "name": "published_online",
+      "value": "{{selector:.doc-abstract-pubdate|replace:\"Date of Publication:\":\"\"|trim|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "ieee_article_number",
+      "value": "{{url|split:\"/document/\"|last|split:\"/\"|first}}",
+      "type": "text"
+    },
+    {
+      "name": "ieee_keywords",
+      "value": "{{meta:name:owc_ieee_keywords}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/ieee",
+      "type": "multitext"
+    }
+  ],
+  "triggers": [
+    "/^https?:\\/\\/ieeexplore\\.ieee\\.org\\/document\\//"
+  ],
+  "noteNameFormat": "{% if selector:.authors-info-container > .authors-info:nth-child(3) %}{{selector:.authors-info-container > .authors-info:nth-child(1) .blue-tooltip a > span|trim|split:\" \"|last}} et al. ({{selector:.u-pb-1.stats-document-abstract-publishedIn|split:\", \"|last|replace:\")\":\"\"|trim|split:\" \"|last}}){% else %}{% if selector:.authors-info-container > .authors-info:nth-child(2) %}{{selector:.authors-info-container > .authors-info:nth-child(1) .blue-tooltip a > span|trim|split:\" \"|last}} and {{selector:.authors-info-container > .authors-info:nth-child(2) .blue-tooltip a > span|trim|split:\" \"|last}} ({{selector:.u-pb-1.stats-document-abstract-publishedIn|split:\", \"|last|replace:\")\":\"\"|trim|split:\" \"|last}}){% else %}{{selector:.authors-info-container > .authors-info:nth-child(1) .blue-tooltip a > span|trim|split:\" \"|last}} ({{selector:.u-pb-1.stats-document-abstract-publishedIn|split:\", \"|last|replace:\")\":\"\"|trim|split:\" \"|last}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "context": ""
+}

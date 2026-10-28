@@ -3,8 +3,10 @@
   "name": "GeoScienceWorld Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:.al-author-name .linked-name|slice:2,3 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.al-author-name .linked-name|slice:1,2 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-author-name .linked-name|slice:1,2|join|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["pubs.geoscienceworld.org"],
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/pubs\\.geoscienceworld\\.org\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -37,6 +39,16 @@
       "type": "text"
     },
     {
+      "name": "article_number",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
       "name": "doi",
       "value": "{{meta:name:citation_doi}}",
       "type": "text"
@@ -47,18 +59,23 @@
       "type": "text"
     },
     {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
       "name": "abstract",
       "value": "{{selectorHtml:section.abstract|remove_html:h2|markdown|trim}}",
       "type": "text"
     },
     {
-      "name": "date",
-      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
-      "type": "date"
+      "name": "keywords",
+      "value": "",
+      "type": "multitext"
     },
     {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {

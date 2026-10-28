@@ -3,9 +3,9 @@
   "name": "Oxford Academic (OUP) Article",
   "behavior": "create",
   "noteNameFormat": "{% set year = selector:.ww-citation-primary|replace:\"/^.*?, (?!Volume |Issue )(?:[A-Za-z]+ )?((?:19|20)[0-9]{2}),.*$/\":\"$1\" %}{% if year contains \",\" %}{% set year = meta:name:citation_publication_date|split:\"/\"|first %}{% endif %}{% if selector:.al-author-name:nth-child(3) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{year}}){% elseif selector:.al-authors-list .al-author-name:nth-child(2) .linked-name %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-authors-list .al-author-name:nth-child(2) .linked-name|split:\" \"|last}} ({{year}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{year}}){% endif %}",
-  "path": "Research/Literature/notes",
+  "path": "Research/Literature",
   "triggers": [
-    "academic.oup.com"
+    "/^https?:\\/\\/academic\\.oup\\.com\\//"
   ],
   "properties": [
     {
@@ -39,6 +39,16 @@
       "type": "text"
     },
     {
+      "name": "article_number",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
       "name": "doi",
       "value": "{{meta:name:citation_doi}}",
       "type": "text"
@@ -46,6 +56,11 @@
     {
       "name": "source_url",
       "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
       "type": "text"
     },
     {
@@ -59,13 +74,8 @@
       "type": "multitext"
     },
     {
-      "name": "date",
-      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
-      "type": "date"
-    },
-    {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {

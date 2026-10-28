@@ -3,8 +3,10 @@
   "name": "Science.org Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:article header a[href=\"#con3\"] %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} et al. ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{% if selector:article header a[href=\"#con2\"] %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} and {{selector:a[href=\"#con2\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{{selector:a[href=\"#con1\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["science.org/doi"],
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/(www\\.)?science\\.org\\/doi\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -22,14 +24,29 @@
       "type": "text"
     },
     {
-      "name": "volume_issue",
-      "value": "{{selector:article header nav a[href*=\"/toc/\"]|first}}",
+      "name": "volume",
+      "value": "{{selector:article header .core-self-citation [property=\"volumeNumber\"]|first}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{selector:article header .core-self-citation [property=\"issueNumber\"]|first}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{{selector:article header .core-self-citation [property=\"pageStart\"]|first}}{% if selector:article header .core-self-citation [property=\"pageEnd\"] %}-{{selector:article header .core-self-citation [property=\"pageEnd\"]|first}}{% endif %}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "",
       "type": "text"
     },
     {
       "name": "published",
-      "value": "{{selector:article header .core-date-published}}",
-      "type": "text"
+      "value": "{{selector:article header .core-date-published|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
     },
     {
       "name": "doi",
@@ -42,13 +59,23 @@
       "type": "text"
     },
     {
+      "name": "pdf_url",
+      "value": "",
+      "type": "text"
+    },
+    {
       "name": "abstract",
       "value": "{{selectorHtml:#abstract|remove_html:h2|remove_html:h3|markdown|trim}}",
       "type": "text"
     },
     {
+      "name": "keywords",
+      "value": "",
+      "type": "multitext"
+    },
+    {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {

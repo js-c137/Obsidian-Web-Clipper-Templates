@@ -3,8 +3,10 @@
   "name": "Springer Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:.c-article-author-list__item:nth-child(3) > a %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.c-article-author-list__item:nth-child(2) > a %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} and {{selector:.c-article-author-list__item:nth-child(2) > a|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.c-article-author-list__item > a|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["link.springer.com/article", "springer.com/article"],
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/([a-z0-9-]+\\.)?springer\\.com\\/article\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -32,14 +34,19 @@
       "type": "text"
     },
     {
+      "name": "pages",
+      "value": "",
+      "type": "text"
+    },
+    {
       "name": "article_number",
       "value": "{{meta:name:citation_firstpage}}",
       "type": "text"
     },
     {
       "name": "published",
-      "value": "{{selector:.c-article-identifiers li:nth-child(3) time}}",
-      "type": "text"
+      "value": "{{selector:.c-article-identifiers li:nth-child(3) time|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
     },
     {
       "name": "doi",
@@ -52,13 +59,23 @@
       "type": "text"
     },
     {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
       "name": "abstract",
       "value": "{{selectorHtml:#Abs1-section .c-article-section__content|remove_html:figure|markdown|trim}}",
       "type": "text"
     },
     {
+      "name": "keywords",
+      "value": "",
+      "type": "multitext"
+    },
+    {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {

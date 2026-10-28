@@ -3,8 +3,10 @@
   "name": "PNAS Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:article header a[href=\"#con3\"] %}{{selector:article header a[href=\"#con1\"]|first|split:\" \"|last}} et al. ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{% if selector:article header a[href=\"#con2\"] %}{{selector:article header a[href=\"#con1\"]|first|split:\" \"|last}} and {{selector:article header a[href=\"#con2\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% else %}{{selector:article header a[href=\"#con1\"]|first|split:\" \"|last}} ({{selector:article header .core-date-published|split:\" \"|last}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["pnas.org/doi/"],
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/(www\\.)?pnas\\.org\\/doi\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -32,14 +34,19 @@
       "type": "text"
     },
     {
+      "name": "pages",
+      "value": "",
+      "type": "text"
+    },
+    {
       "name": "article_number",
       "value": "{{meta:name:citation_firstpage}}",
       "type": "text"
     },
     {
       "name": "published",
-      "value": "{{selector:article header .core-date-published}}",
-      "type": "text"
+      "value": "{{selector:article header .core-date-published|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
     },
     {
       "name": "doi",
@@ -52,13 +59,23 @@
       "type": "text"
     },
     {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
       "name": "abstract",
       "value": "{{selectorHtml:#abstract|remove_html:h2|markdown|trim}}",
       "type": "text"
     },
     {
+      "name": "keywords",
+      "value": "",
+      "type": "multitext"
+    },
+    {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {

@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "arXiv HTML Article",
+  "behavior": "create",
+  "noteContentFormat": "## Abstract\n\n{{selectorHtml:.ltx_abstract > p|join:\"\\n\\n\"|markdown|trim}}\n\n## Article Content\n\n{% if selectorHtml:.owc-arxiv-body %}{{selectorHtml:.owc-arxiv-body|remove_html:\"figure.ltx_figure\"|markdown|trim}}{% else %}{{selectorHtml:article.ltx_document > section.ltx_section|join:\"\\n\\n\"|remove_html:\"figure.ltx_figure\"|markdown|trim}}{% endif %}\n\n## References\n\n{% if selectorHtml:.owc-arxiv-references %}{{selectorHtml:.owc-arxiv-references|markdown|trim}}{% else %}{{selector:.ltx_bibliography li.ltx_bibitem|list:numbered}}{% endif %}\n\n## My Notes\n\n",
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{selector:h1.ltx_title_document|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:meta[name=\"citation_author\"]?content}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "arXiv",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:owc_date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "https://arxiv.org/pdf/{{meta:name:citation_arxiv_id}}{{meta:name:owc_version}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selector:.ltx_abstract > p|join:\" \"|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{selector:meta[name=\"citation_keywords\"]?content}}",
+      "type": "multitext"
+    },
+    {
+      "name": "arxiv_id",
+      "value": "{{meta:name:citation_arxiv_id}}",
+      "type": "text"
+    },
+    {
+      "name": "version",
+      "value": "{{meta:name:owc_version}}",
+      "type": "text"
+    },
+    {
+      "name": "primary_category",
+      "value": "{{meta:name:owc_primary_category}}",
+      "type": "text"
+    },
+    {
+      "name": "categories",
+      "value": "{{selector:meta[name=\"owc_subjects\"]?content}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal_ref",
+      "value": "{{meta:name:owc_journal_ref}}",
+      "type": "text"
+    },
+    {
+      "name": "journal_doi",
+      "value": "{{meta:name:owc_journal_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "comments",
+      "value": "{{meta:name:owc_comments}}",
+      "type": "text"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/arxiv",
+      "type": "multitext"
+    }
+  ],
+  "triggers": [
+    "/^https?:\\/\\/(www\\.)?arxiv\\.org\\/html\\//"
+  ],
+  "noteNameFormat": "{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:meta[name=\"citation_author\"]?content|first|split:\",\"|first|trim}} et al. ({{meta:name:owc_date|split:\"-\"|first}}){% else %}{% if selector:meta[name=\"citation_author\"] + meta[name=\"citation_author\"] %}{{selector:meta[name=\"citation_author\"]?content|first|split:\",\"|first|trim}} and {{selector:meta[name=\"citation_author\"]?content|last|split:\",\"|first|trim}} ({{meta:name:owc_date|split:\"-\"|first}}){% else %}{{selector:meta[name=\"citation_author\"]?content|first|split:\",\"|first|trim}} ({{meta:name:owc_date|split:\"-\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "context": ""
+}

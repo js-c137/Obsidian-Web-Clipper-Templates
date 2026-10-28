@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "IOPscience Article",
+  "behavior": "create",
+  "noteContentFormat": "## Abstract\n\n{% if selectorHtml:.owc-iop-abstract %}{{selectorHtml:.owc-iop-abstract|markdown|trim}}{% else %}{{selectorHtml:.wd-jnl-art-abstract|remove_html:\".texImage\"|markdown|trim}}{% endif %}\n\n## Article Content\n\n{% if selectorHtml:.owc-iop-body %}{{selectorHtml:.owc-iop-body|remove_html:\"figure\"|markdown|trim}}{% else %}{{selectorHtml:[itemprop=\"articleBody\"]|remove_html:\"figure,.texImage,mjx-container\"|markdown|trim}}{% endif %}\n\n## References\n\n{% if selectorHtml:.owc-iop-references %}{{selectorHtml:.owc-iop-references|markdown|trim}}{% else %}{{selector:.references li cite|list:numbered}}{% endif %}\n\n## My Notes\n\n",
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{meta:name:citation_title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:span.nowrap[itemprop=\"author\"] > span[itemprop=\"name\"]}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "{{meta:name:citation_firstpage}}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:dc.date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selector:.wd-jnl-art-abstract|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{meta:name:citation_keywords}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/iop",
+      "type": "multitext"
+    }
+  ],
+  "triggers": [
+    "/^https?:\\/\\/iopscience\\.iop\\.org\\/article\\/10\\./"
+  ],
+  "noteNameFormat": "{% if selector:span.nowrap[itemprop=\"author\"] ~ span.nowrap[itemprop=\"author\"] ~ span.nowrap[itemprop=\"author\"] %}{{selector:span.nowrap[itemprop=\"author\"] > span[itemprop=\"name\"]|first|trim|split:\" \"|last}} et al. ({{meta:name:dc.date|split:\"-\"|first}}){% else %}{% if selector:span.nowrap[itemprop=\"author\"] ~ span.nowrap[itemprop=\"author\"] %}{{selector:span.nowrap[itemprop=\"author\"] > span[itemprop=\"name\"]|first|trim|split:\" \"|last}} and {{selector:span.nowrap[itemprop=\"author\"] > span[itemprop=\"name\"]|last|trim|split:\" \"|last}} ({{meta:name:dc.date|split:\"-\"|first}}){% else %}{{selector:span.nowrap[itemprop=\"author\"] > span[itemprop=\"name\"]|first|trim|split:\" \"|last}} ({{meta:name:dc.date|split:\"-\"|first}}){% endif %}{% endif %}",
+  "path": "Research/Literature",
+  "context": ""
+}

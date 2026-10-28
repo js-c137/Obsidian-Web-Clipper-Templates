@@ -3,8 +3,10 @@
   "name": "ScienceDirect Article",
   "behavior": "create",
   "noteNameFormat": "{% if selector:.author-group .text.surname|slice:2,3 %}{{selector:.author-group .text.surname|first}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.author-group .text.surname|slice:1,2 %}{{selector:.author-group .text.surname|first}} and {{selector:.author-group .text.surname|slice:1,2|join}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.author-group .text.surname|first}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
-  "path": "Research/Literature/notes",
-  "triggers": ["sciencedirect.com/science/article", "schema:@Article"],
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/(www\\.)?sciencedirect\\.com\\/science\\/article\\//"
+  ],
   "properties": [
     {
       "name": "title",
@@ -21,21 +23,31 @@
       "value": "{{selector:.publication-volume .anchor-text|first}}",
       "type": "text"
     },
-	{
-	  "name": "volume",
-	  "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|first}}",
-	  "type": "text"
-	},
-	{
-	  "name": "date",
-	  "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"}}",
-	  "type": "date"
-	},
-	{
-	  "name": "pages",
-	  "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|last}}",
-	  "type": "text"
-	},
+    {
+      "name": "volume",
+      "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|first}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{{selector:.publication-volume .text-xs|first|split:\", \"|last}}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:citation_publication_date|split:\"/\"|join:\"-\"|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
     {
       "name": "doi",
       "value": "{{selector:.doi}}",
@@ -46,11 +58,16 @@
       "value": "{{url}}",
       "type": "text"
     },
-	{
-	  "name": "abstract",
-	  "value": "{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}",
-	  "type": "text"
-	},
+    {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}",
+      "type": "text"
+    },
     {
       "name": "keywords",
       "value": "{{selector:.keywords-section .keyword span}}",
@@ -58,7 +75,7 @@
     },
     {
       "name": "clipped_date",
-      "value": "{{date}}",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
       "type": "date"
     },
     {
@@ -72,5 +89,5 @@
       "type": "multitext"
     }
   ],
-	"noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}\n\n---\n\n## Highlights\n\n{{selectorHtml:.abstract.author-highlights|first|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.Body|remove_html:figure|remove_html:svg|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:.Body .figure.text-xs|join:\"\n\n\"|remove_html:ol|markdown|trim}}\n\n---\n\n## References\n\n{{selector:ol.references li|join:\"\n\n\"}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.abstract.author|remove_html:h2|markdown|trim}}\n\n---\n\n## Highlights\n\n{{selectorHtml:.abstract.author-highlights|first|remove_html:h2|markdown|trim}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.Body|remove_html:figure|remove_html:svg|markdown|trim}}\n\n---\n\n## Figure Captions\n\n{{selectorHtml:.Body .figure.text-xs|join:\"\n\n\"|remove_html:ol|markdown|trim}}\n\n---\n\n## References\n\n{{selector:ol.references li|join:\"\n\n\"}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }

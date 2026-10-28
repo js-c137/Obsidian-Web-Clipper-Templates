@@ -19,10 +19,38 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 
 ---
 
+## Frontmatter schema
+
+Every template writes the same properties in the same order, so all notes in `Research/Literature` look alike in Obsidian and share one type per property name. A field the publisher does not provide is left empty rather than omitted.
+
+| # | Property | Type | Notes |
+|---|---|---|---|
+| 1 | `title` | text | |
+| 2 | `authors` | multitext | |
+| 3 | `journal` | text | `arXiv` / `ESS Open Archive (preprint)` for preprints |
+| 4 | `volume` | text | |
+| 5 | `issue` | text | |
+| 6 | `pages` | text | page range |
+| 7 | `article_number` | text | e-locator / article number (AGU, IOP, MDPI, PNAS, Springer) |
+| 8 | `published` | date | `YYYY-MM-DD` via `\|date:"YYYY-MM-DD"`; month-only sources become day 01; unparseable text is kept as-is |
+| 9 | `doi` | text | |
+| 10 | `source_url` | text | |
+| 11 | `pdf_url` | text | `citation_pdf_url` where the page has it |
+| 12 | `abstract` | text | |
+| 13 | `keywords` | multitext | |
+| | *publisher extras* | | arXiv: `arxiv_id`, `version`, `primary_category`, `categories`, `journal_ref`, `journal_doi`, `comments`. IEEE: `published_online`, `ieee_article_number`, `ieee_keywords` |
+| 14 | `clipped_date` | date | |
+| 15 | `status` | text | `unread` |
+| 16 | `tags` | multitext | `literature/<publisher>` |
+
+Names changed in Oct 2026: `date` → `published` (GSW, OUP, ScienceDirect, Frontiers, IEEE, T&F); `volume_issue` → `volume` + `issue` (AGU, Copernicus, Science.org). Notes clipped before then keep the old names.
+
+---
+
 ## Templates
 
 ### 1. `ScienceDirect Article`
-**Trigger:** `sciencedirect.com/science/article`
+**Trigger:** `/^https?:\/\/(www\.)?sciencedirect\.com\/science\/article\//` (regex)
 
 | Property | Source | Notes |
 |---|---|---|
@@ -30,7 +58,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 | `authors` | `.author-group .react-xocs-alternative-link` | Handles `<button>` and `<a>` author types |
 | `journal` | `.publication-volume .anchor-text\|first` | First anchor-text in header |
 | `volume` | `.publication-volume .text-xs\|split:", "\|first` | First segment of combined field |
-| `date` | `meta:name:citation_publication_date\|split:"/"\|join:"-"` | Reformatted to YYYY-MM-DD |
+| `published` | `meta:name:citation_publication_date\|split:"/"\|join:"-"\|date` | Reformatted to YYYY-MM-DD |
 | `pages` | `.publication-volume .text-xs\|split:", "\|last` | Last segment of combined field |
 | `doi` | `.doi` | CSS selector on visible DOI element |
 | `abstract` | `.abstract.author` with `remove_html:h2` | Full text, not meta truncation |
@@ -43,14 +71,16 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 ---
 
 ### 2. `AGU Article`
-**Trigger:** `agupubs.onlinelibrary.wiley.com/doi`, `onlinelibrary.wiley.com/doi`
+**Trigger:** `/^https?:\/\/([a-z0-9-]+\.)?onlinelibrary\.wiley\.com\/doi\//` (regex)
+
+One template covers both current AGU papers and early-2000s papers: Wiley serves both on the same page layout (checked Oct 2026 on GRL 29(1), 2002, and GRL 52(1), 2025). Paragraph numbers on older papers (`[2] `, `span.paraNumber`) are removed from Article Content.
 
 | Property | Source | Notes |
 |---|---|---|
 | `title` | `{{title}}` | Preset variable |
 | `authors` | `.loa-authors-trunc .author-name.accordion-tabbed__control` | Scoped to deduplicate DOM copies |
 | `journal` | `meta:name:citation_journal_title` | Meta tag — stable across Wiley journals |
-| `volume_issue` | `.volume-issue\|first` | e.g. `"Volume 20, Issue 1"` |
+| `volume` / `issue` | `.volume-issue\|first`, split on `Volume ` / `Issue ` | from e.g. `"Volume 20, Issue 1"` |
 | `published` | `.epub-date` | e.g. `"21 December 2018"` |
 | `doi` | `meta:name:citation_doi` | Clean DOI without URL prefix |
 | `abstract` | `.article-section__abstract .article-section__content\|first` | Scoped to exclude Plain Language Summary |
@@ -65,7 +95,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 ---
 
 ### 3. `Springer Article`
-**Trigger:** `link.springer.com/article`, `springer.com/article`
+**Trigger:** `/^https?:\/\/([a-z0-9-]+\.)?springer\.com\/article\//` (regex)
 
 | Property | Source | Notes |
 |---|---|---|
@@ -90,14 +120,14 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 ---
 
 ### 4. `Science.org Article`
-**Trigger:** `science.org/doi`
+**Trigger:** `/^https?:\/\/(www\.)?science\.org\/doi\//` (regex)
 
 | Property | Source | Notes |
 |---|---|---|
 | `title` | `{{title}}` | Preset variable |
 | `authors` | `article header a[href^="#con"]` | Anchor links to contributor sections — ordered and deduplicated |
 | `journal` | `meta:name:citation_journal_title` | Meta tag |
-| `volume_issue` | `article header nav a[href*="/toc/"]\|first` | Combined volume/issue from nav link |
+| `volume` / `issue` / `pages` | `.core-self-citation [property="volumeNumber"]`, `issueNumber`, `pageStart`-`pageEnd` | Tagged elements in the header citation (checked Oct 2026) |
 | `published` | `article header .core-date-published` | e.g. `"3 January 2020"` |
 | `doi` | `article header a[href^="https://doi.org/10."]\|first\|split:"DOI: "\|last` | Extracted from visible DOI link |
 
@@ -110,7 +140,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 ---
 
 ### 5. `PNAS Article`
-**Trigger:** `pnas.org/doi/`
+**Trigger:** `/^https?:\/\/(www\.)?pnas\.org\/doi\//` (regex)
 
 | Property | Source | Notes |
 |---|---|---|
@@ -135,7 +165,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 ---
 
 ### 6. `GeoScienceWorld Article`
-**Trigger:** `pubs.geoscienceworld.org`
+**Trigger:** `/^https?:\/\/pubs\.geoscienceworld\.org\//` (regex)
 
 | Property | Source | Notes |
 |---|---|---|
@@ -147,7 +177,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 | `pages` | `.ww-citation-primary\|split:": "\|last\|split:"."\|first` | Extracted from citation string — splits after colon, strips trailing period |
 | `doi` | `meta:name:citation_doi` | Meta tag |
 | `abstract` | `section.abstract` with `remove_html:h2` | Strips "Abstract" heading, keeps full text |
-| `date` | `meta:name:citation_publication_date\|split:"/"\|join:"-"` | Reformatted to YYYY-MM-DD |
+| `published` | `meta:name:citation_publication_date\|split:"/"\|join:"-"\|date` | Reformatted to YYYY-MM-DD |
 
 **Body sections:** Abstract → Article Content (`.article-body` with `remove_html:figure`) → References (`.ref-list .ref-content` joined)
 
@@ -158,7 +188,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 ---
 
 ### 7. `Oxford Academic (OUP) Article`
-**Trigger:** `academic.oup.com`
+**Trigger:** `/^https?:\/\/academic\.oup\.com\//` (regex)
 
 | Property | Source | Notes |
 |---|---|---|
@@ -171,7 +201,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 | `doi` | `meta:name:citation_doi` | Meta tag |
 | `abstract` | `section.abstract` with `remove_html:h2` | Strips "Abstract" heading |
 | `keywords` | `.kwd-group .kwd-main` | Returns array |
-| `date` | `meta:name:citation_publication_date\|split:"/"\|join:"-"` | Reformatted to YYYY-MM-DD |
+| `published` | `meta:name:citation_publication_date\|split:"/"\|join:"-"\|date` | Reformatted to YYYY-MM-DD |
 
 **Body sections:** Abstract → Article Content (`{{content}}` preset — OUP article body is cleanly extractable without CSS targeting) → References (`.ref-list .mixed-citation` joined)
 
@@ -182,7 +212,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 ---
 
 ### 8. `MDPI Article`
-**Trigger:** `mdpi.com/`
+**Trigger:** `/^https?:\/\/(www\.)?mdpi\.com\/\d{4}-\d{3}[\dX]\//` (regex)
 
 | Property | Source | Notes |
 |---|---|---|
@@ -236,7 +266,15 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 2. Open the extension → **gear icon** → **Templates** → **New Template**
 3. Click the **`...`** menu → **Import** (or paste JSON directly if your version supports it)
 4. Paste the contents of the relevant `.json` template file
-5. Navigate to a supported article page — the template auto-triggers on URL match
+5. Navigate to a supported article page. The matching template is selected automatically from the page address (see below)
+
+### Automatic template selection
+
+Each template has a `triggers` list. The Web Clipper treats a plain-text trigger as a prefix of the full URL (it must start with `https://`), and a trigger wrapped in `/.../` as a regular expression. All templates here use regex triggers so that `www.` and journal subdomains (for example `se.copernicus.org`) match.
+
+- Plain-text triggers are checked first, then regex triggers in the order of your template list. If nothing matches, the template at the top of the list is used.
+- `sciencedirect-alternate.json` has no trigger: pick it by hand when the standard ScienceDirect template fails on a page.
+- After changing a trigger in a `.json` file, re-import the template (or edit the trigger in the extension settings). The extension keeps its own copy and does not read these files.
 
 ---
 
@@ -281,7 +319,7 @@ Files are saved as `Surname (Year).md` for immediate Zotero/Citations plugin com
 
 - **MDPI article content** — `#article-contents` includes the full article from abstract through references on a single page. The abstract and keywords therefore appear both in their dedicated frontmatter sections at the top of the note and again inline within Article Content. This is intentional — the dedicated sections provide clean frontmatter while the article content provides the full reading experience.
 
-- **MDPI trigger breadth** — the trigger `mdpi.com/` fires on all MDPI pages including journal homepages, author pages, and search results. The template fields will simply return empty on non-article pages; no notes will be created unless the clipper is manually triggered.
+- **MDPI trigger** matches article pages only (`mdpi.com/<ISSN>/...`), so journal homepages, author pages and search results no longer select the MDPI template.
 
 ---
 
@@ -298,14 +336,14 @@ obsidian-web-clipper-templates/
 ├── gsw-article.json                   ← GeoScienceWorld
 ├── oup-article.json                   ← Oxford Academic (OUP)
 ├── mdpi-article.json                  ← MDPI (all journals)
-└── agu-article-old-style.json         ← Legacy AGU layout (archived)
+└── agu-article-old-style.json         ← Superseded by agu-article.json (no trigger; safe to delete)
 ```
 
 ---
 
 ## Vault Integration
 
-All templates save to `Research/Literature/notes` and are designed for use with:
+All templates save to `Research/Literature` and are designed for use with:
 
 - **Dataview** — all frontmatter fields are typed correctly (`text`, `multitext`, `date`) for querying
 - **Zotero / Citations plugin** — `doi` field enables citekey linking; filename format `Surname (Year)` matches common citekey conventions
@@ -315,7 +353,7 @@ Example Dataview query to list unread papers by journal:
 
 ```dataview
 TABLE authors, journal, published, doi
-FROM "Research/Literature/notes"
+FROM "Research/Literature"
 WHERE status = "unread"
 SORT published DESC
 ```
