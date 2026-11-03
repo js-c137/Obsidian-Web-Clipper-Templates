@@ -336,6 +336,7 @@ obsidian-web-clipper-templates/
 ├── gsw-article.json                   ← GeoScienceWorld
 ├── oup-article.json                   ← Oxford Academic (OUP)
 ├── mdpi-article.json                  ← MDPI (all journals)
+├── aip-article.json                   ← AIP Publishing (pubs.aip.org)
 └── agu-article-old-style.json         ← Superseded by agu-article.json (no trigger; safe to delete)
 ```
 

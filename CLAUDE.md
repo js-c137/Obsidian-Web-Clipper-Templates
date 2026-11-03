@@ -20,6 +20,7 @@ obsidian-web-clipper-templates/
 ├── ieee-prep.user.js              ← Tampermonkey userscript required by ieee-article.json (math, keywords, references)
 ├── iop-article.json               ← IOPscience / IOP Publishing
 ├── iop-prep.user.js               ← Tampermonkey userscript required by iop-article.json (math, references)
+├── aip-article.json               ← AIP Publishing (pubs.aip.org: RSI, AIP Advances, JAP, ASA …; Silverchair)
 ├── arxiv-article.json             ← arXiv HTML view (arxiv.org/html/…, LaTeXML)
 ├── arxiv-prep.user.js             ← Tampermonkey userscript required by arxiv-article.json (metadata, equations, footnotes, references)
 ├── mathml-to-latex.user.js        ← Tampermonkey userscript: MathML → LaTeX pre-processor
@@ -65,6 +66,14 @@ All templates use `schemaVersion: "0.1.0"` and share this output structure:
 **Copernicus full text:** the article page carries the full HTML text (checked Nov 2026 on Geosci. Instrum. Method. Data Syst. 10, 257, 2021): `div.article > div.sec[id^="section"]` (section1..N, h2 headings, back matter included), references `div.article > div.ref-list p.ref` (one paragraph each, DOI links kept), figures `div.fig` removed. Maths: MathJax 2.7.5 with MathML input; clean MathML in `.MJX_Assistive_MathML > math`, so `remove_html:".MathJax_Preview,nobr,script,svg,.fig"` leaves one copy and `|markdown` converts it to `$…$` / `$$…$$`. Many inline formulas are plain `<i>`/`<sub>`/`<strong>` HTML. Top-level section titles are `div.h1` (label span + text), not heading tags, and subsections are `h2`; the body chain first does `replace:"/<(\/?)h2\b/g":"<$1h3"` then turns `div.h1` into `<h2>` with a regex (no nested `div` inside `div.h1`). Equation labels are `mlabeledtr` cells, so "(1)" lands at the start of the last aligned row rather than as `\tag`. Pages with no sections (EGUsphere preprints) fall back to an info box with the PDF link.
 
 **GSW / OUP:** Both use the Silverchair platform — same author selectors (`.al-author-name .linked-name`) and same citation string parsing for pages.
+
+**AIP Publishing (pubs.aip.org):** Silverchair, built from the OUP template. Checked Nov 2026 on Rev. Sci. Instrum. 94, 035111 (abstract-only for the user) and AIP Advances 16, 115002 (open access, full text). Key findings:
+- Metadata: static `citation_*` tags (title, authors "Surname, Given" one per author, journal, volume, issue, publication_date, doi, pdf_url); no `citation_firstpage`/`lastpage`/`keywords`. Article number or page range comes from `.ww-citation-primary` ("Rev. Sci. Instrum. 94, 035111 (2023)"): last comma part, first space token; contains "–" → `pages`, else `article_number`. Do not `split:" ("`: split treats it as a regex and the lone `(` errors.
+- Keywords: "Topics" links `.content-metadata-taxonomies a` (8 on RSI 94, 035111).
+- Full text: `.widget-ArticleFulltext .widget-items` with `h2.section-title` sections; abstract-only pages have none, and the template shows an info box with the PDF link. Removed: `.widget-items > span` ("Open figure viewer"), abstract wrapper, metadata panels, `.fig-section`, references, permission statement, `mjx-math`.
+- Maths: MathJax 3.2.2, MathML input; clean copy in `mjx-assistive-mml > math`, but no `display` attribute anywhere. Before `|markdown`: add `display="block"` to the first `<math>` after each `<div class="disp-formula"`, strip `mjx-container`/`mjx-assistive-mml` tags (a `<math>` still inside `mjx-container` came out as flattened text), and rename `<div class="math">` (defuddle's KaTeX rule grabs any element with class `math` and takes its text). Labels `span.label.title-label` "(1a)" become `\tag{1a}` via an OWCTAG marker and a post-markdown regex; knap needs `\\\\tag` in the template text to emit one backslash (`\\tag` gives a tab).
+- In-text citations `a.xref-bibr` (href `javascript:;`) are superscript only by CSS; wrapped in `<sup>` before conversion.
+- References: OUP chain (`.ref-list .mixed-citation`, `.citation-links` removed, `strip_tags`).
 
 **Taylor & Francis:** Verified live against `10.1080/1064119X.2018.1485066` (Marine Georesources & Geotechnology). Key findings:
 - Metadata: Most fields use Dublin Core (`dc.Creator`, `dc.Date`, `dc.Subject`). Only `citation_journal_title` is static; all other `citation_*` tags are JS-injected and unavailable to the Web Clipper.

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "AIP Publishing Article",
+  "behavior": "create",
+  "noteNameFormat": "{% set n = selector:meta[name=\"citation_author\"]?content|length %}{% if n > 2 %}{{selector:meta[name=\"citation_author\"]?content|first|split:\", \"|first|trim}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% elseif n > 1 %}{{selector:meta[name=\"citation_author\"]?content|first|split:\", \"|first|trim}} and {{selector:meta[name=\"citation_author\"]?content|last|split:\", \"|first|trim}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:meta[name=\"citation_author\"]?content|first|split:\", \"|first|trim}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}",
+  "path": "Research/Literature",
+  "triggers": [
+    "/^https?:\\/\\/pubs\\.aip\\.org\\/[^\\/]+\\/[^\\/]+\\/article(-abstract)?\\//"
+  ],
+  "properties": [
+    {
+      "name": "title",
+      "value": "{{meta:name:citation_title}}",
+      "type": "text"
+    },
+    {
+      "name": "authors",
+      "value": "{{selector:.al-author-name .linked-name}}",
+      "type": "multitext"
+    },
+    {
+      "name": "journal",
+      "value": "{{meta:name:citation_journal_title}}",
+      "type": "text"
+    },
+    {
+      "name": "volume",
+      "value": "{{meta:name:citation_volume}}",
+      "type": "text"
+    },
+    {
+      "name": "issue",
+      "value": "{{meta:name:citation_issue}}",
+      "type": "text"
+    },
+    {
+      "name": "pages",
+      "value": "{% set loc = selector:.ww-citation-primary|split:\", \"|last|split:\" \"|first|trim %}{% if loc contains \"–\" %}{{loc|replace:\"–\":\"-\"}}{% endif %}",
+      "type": "text"
+    },
+    {
+      "name": "article_number",
+      "value": "{% set loc = selector:.ww-citation-primary|split:\", \"|last|split:\" \"|first|trim %}{% if not (loc contains \"–\") %}{{loc}}{% endif %}",
+      "type": "text"
+    },
+    {
+      "name": "published",
+      "value": "{{meta:name:citation_publication_date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "doi",
+      "value": "{{meta:name:citation_doi}}",
+      "type": "text"
+    },
+    {
+      "name": "source_url",
+      "value": "{{url}}",
+      "type": "text"
+    },
+    {
+      "name": "pdf_url",
+      "value": "{{meta:name:citation_pdf_url}}",
+      "type": "text"
+    },
+    {
+      "name": "abstract",
+      "value": "{{selectorHtml:section.abstract|remove_html:\"mjx-math,.abstract-title\"|replace:\"/<\\/?mjx-(container|assistive-mml)\\b[^>]*>/g\":\"\"|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\"|trim}}",
+      "type": "text"
+    },
+    {
+      "name": "keywords",
+      "value": "{{selector:.content-metadata-taxonomies a}}",
+      "type": "multitext"
+    },
+    {
+      "name": "clipped_date",
+      "value": "{{date|date:\"YYYY-MM-DD\"}}",
+      "type": "date"
+    },
+    {
+      "name": "status",
+      "value": "unread",
+      "type": "text"
+    },
+    {
+      "name": "tags",
+      "value": "literature/aip",
+      "type": "multitext"
+    }
+  ],
+  "noteContentFormat": "# {{meta:name:citation_title}}\n\n## Abstract\n\n{{selectorHtml:section.abstract|remove_html:\"mjx-math,.abstract-title\"|replace:\"/<\\/?mjx-(container|assistive-mml)\\b[^>]*>/g\":\"\"|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\"|trim}}\n\n---\n\n## Article Content\n\n{% if selector:.widget-ArticleFulltext h2.section-title %}{{selectorHtml:.widget-ArticleFulltext .widget-items|remove_html:\".widget-items > span,.article-metadata-standalone-panel,.article-section-wrapper,.article-metadata-panel,.figshare-wrapper,h2.backreferences-title,.ref-list,.permissionstatement-section-wrapper,.fig-section,mjx-math,.table-open-button-wrap,.table-modal\"|replace:\"/(<div class=\\\"disp-formula\\\"[\\s\\S]*?<math)/g\":\"$1 display=\\\"block\\\"\",\"/<\\/?mjx-(container|assistive-mml)\\b[^>]*>/g\":\"\",\"/<div class=\\\"math\\\">/g\":\"<div>\",\"/<a\\b[^>]*\\bxref-bibr\\b[^>]*>([\\s\\S]*?)<\\/a>/g\":\"<sup>$1</sup>\",\"/<span class=\\\"label title-label\\\">\\(([^)<]+)\\)<\\/span>/g\":\"<p>OWCTAG$1OWCEND</p>\"|markdown|replace:\"/\\\\\\\\left([\\\\[\\\\]()|])\\\\\\\\right\\\\./g\":\"$1\",\"/\\\\\\\\left\\\\.\\\\\\\\right([\\\\[\\\\]()|])/g\":\"$1\",\"/\\\\u2060/g\":\"\",\"/\\\\[([^\\\\]]*)\\\\]\\\\(javascript:;\\\\)/g\":\"$1\",\"/ \\\\. \\\\|/g\":\" |\",\"/\\$\\$\\n([\\s\\S]*?)\\n\\$\\$\\s*OWCTAG([^\\n]*?)OWCEND/g\":\"$$$$\\n$1 \\\\\\\\tag{$2}\\n$$$$\",\"/OWCTAG([^\\n]*?)OWCEND/g\":\"($1)\"|trim}}{% else %}> [!info] Full text not on page\n> This is the abstract page (no full-text access, or an \"article-abstract\" link). Full article (PDF): {{meta:name:citation_pdf_url}}{% endif %}\n\n---\n\n## References\n\n{{selectorHtml:.ref-list .mixed-citation|join:\"\\n\\n\"|remove_html:\".citation-links\"|strip_tags|replace:\"/[ \\\\t\\\\u00a0]+/g\":\" \",\"/ +([,.;:])/g\":\"$1\",\"/(?<![\\\\/\\\\w])(10\\\\.[0-9]{4,9}\\\\/)/g\":\" https://doi.org/$1\",\"/ {2,}/g\":\" \",\"/ *\\\\n */g\":\"\\n\",\"/\\\\n{3,}/g\":\"\\n\\n\"|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+}
