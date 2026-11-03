@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IEEE Xplore → Obsidian Web Clipper prep
 // @namespace    obsidian-web-clipper-templates
-// @version      1.0.0
+// @version      1.0.1
 // @description  Builds hidden, clip-ready copies of the IEEE Xplore abstract, full text (MathJax v2 → LaTeX) and reference list, and injects keyword meta tags, for use with ieee-article.json.
 // @match        https://ieeexplore.ieee.org/document/*
 // @run-at       document-idle
@@ -130,10 +130,12 @@
     convertMath(root);
     // "SECTION I." kicker above each heading, zoom buttons, "View Source" links
     root.querySelectorAll('.kicker, button, .zoom-container > button, .link').forEach((n) => n.remove());
-    // In-text citation / equation anchors with no real target: keep the text only
-    root.querySelectorAll('a.fulltext-link').forEach((a) => {
-      const href = a.getAttribute('href') || '';
-      if (!href || href.startsWith('#') || href.startsWith('javascript')) {
+    // In-text citation / figure / equation anchors with no real target: keep the text only.
+    // Not limited to a.fulltext-link: citation links on some articles (e.g. doc 7445183)
+    // have no class, only ref-type="bibr" and href="javascript:void()".
+    root.querySelectorAll('a').forEach((a) => {
+      const href = (a.getAttribute('href') || '').trim();
+      if (!href || href.startsWith('#') || /^javascript:/i.test(href)) {
         a.replaceWith(document.createTextNode(a.textContent));
       }
     });
