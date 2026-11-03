@@ -89,5 +89,5 @@
       "type": "multitext"
     }
   ],
-  "noteContentFormat": "# {{title}}\n\n> [!info] Full text not on page\n> Copernicus journal pages show only the abstract, the full article is a separate PDF: {{meta:name:citation_pdf_url}}\n\n## Abstract\n\n{{selectorHtml:.abstract|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{title}}\n\n## Abstract\n\n{{selectorHtml:.abstract|markdown|trim}}\n\n---\n\n## Article Content\n\n{% if selectorHtml:div.article > div.sec[id^=\"section\"]:not(.ref-list) %}{{selectorHtml:div.article > div.sec[id^=\"section\"]:not(.ref-list)|join:\"\\n\\n\"|replace:\"/<(\\/?)h2\\b/g\":\"<$1h3\",\"/<div[^>]*class=\\\"h1\\\"[^>]*>([\\s\\S]*?)<\\/div>/g\":\"<h2>$1</h2>\"|remove_html:\".MathJax_Preview,nobr,script,svg,.fig\"|markdown|trim}}{% else %}> [!info] Full text not on page\n> Only the abstract is on this page (e.g. an EGUsphere preprint). Full article (PDF): {{meta:name:citation_pdf_url}}{% endif %}\n\n---\n\n## References\n\n{% if selectorHtml:div.article > div.ref-list p.ref %}{{selectorHtml:div.article > div.ref-list p.ref|join:\"\\n\"|markdown|trim}}{% endif %}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }
