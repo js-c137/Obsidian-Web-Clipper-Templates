@@ -46,7 +46,7 @@ All templates use `schemaVersion: "0.1.0"` and share this output structure:
 - `strip_attr:title` on Springer article content — citation `<a>` tags carry multiline `title` attributes that break markdown link syntax
 - `{% if selectorHtml:X %}...{% endif %}` for optional sections (AGU Plain Language Summary, Science.org body fallback)
 - `|split:", "|first` / `|last` chaining to extract fields from combined volume/date/pages strings
-- `|slice:N,M` to detect author count (GSW uses this; MDPI uses adjacent sibling CSS meta tag selector)
+- Author count for filenames: `{% set n = <list>|length %}` in AGU, GSW, ScienceDirect, Copernicus, Frontiers, ESSOAr, T&F (Nov 2026). MDPI and arXiv use adjacent-sibling meta selectors, and IEEE, IOP, OUP, PNAS, Science.org and Springer use `:nth-child(N)` / sibling existence checks; those are unaffected by the one-item unwrapping.
 - `selectorHtml:X|join:"\n\n"|markdown|trim` pattern to collapse multi-element arrays before markdown conversion
 - `selector:.parent > .child` direct child combinator to exclude sibling noise (Springer author list, ORCID links)
 
@@ -60,11 +60,13 @@ All templates use `schemaVersion: "0.1.0"` and share this output structure:
 
 **Science.org:** Article body selector `has([role="doc-acknowledgments"])` falls back to `{{content}}` preset if no acknowledgments section exists.
 
+**Copernicus / Frontiers / ESSOAr:** one `citation_author` tag per author, "Surname, Given" (Frontiers adds a trailing space); read with `selector:meta[name="citation_author"]?content`. Checked Nov 2026 on Ocean Science 22 (3 and 4 authors) and Frontiers in Marine Science 2026 (5 and 3 authors). Frontiers keywords: one `citation_keywords` tag, `"; "`-separated, so `meta:name:citation_keywords|split:"; "`. ESSOAr not re-checked live (Cloudflare check in the automated tab).
+
 **GSW / OUP:** Both use the Silverchair platform — same author selectors (`.al-author-name .linked-name`) and same citation string parsing for pages.
 
 **Taylor & Francis:** Verified live against `10.1080/1064119X.2018.1485066` (Marine Georesources & Geotechnology). Key findings:
 - Metadata: Most fields use Dublin Core (`dc.Creator`, `dc.Date`, `dc.Subject`). Only `citation_journal_title` is static; all other `citation_*` tags are JS-injected and unavailable to the Web Clipper.
-- Authors: `meta:name:dc.Creator` multitext. Count detection uses `.NLM_contrib-group .contribDegrees:nth-child(N)` (each author span has class `contribDegrees`).
+- Authors: property from `.NLM_contrib-group a.author`. Filename from `selector:meta[name="dc.Creator"]?content` (one tag per author, "Given  Surname" with a double space; 5 tags on 10.1080/1064119X.2018.1485066, Nov 2026), counted with `|length`.
 - Abstract: `.hlFld-Abstract` ✅. `.abstractSection` does not exist on T&F pages.
 - Keywords: `meta:name:dc.Subject|split:"; "` ✅.
 - Volume/issue: Parsed from `.issue-heading` text node — `split:"Volume "|last|split:","|first` and `split:"Issue "|last|trim`.
@@ -106,7 +108,7 @@ All templates use `schemaVersion: "0.1.0"` and share this output structure:
 **MDPI:** Trigger matches article pages only (`mdpi.com/<ISSN>/...`). Article number extracted from URL (`{{url|split:"/"|last}}`). Abstract and keywords appear twice in output (frontmatter + article content) — intentional.
 Re-verified Oct 2026 against `10.3390/s25144511` (Sensors 25, 4511) after MDPI's HTML changed:
 - Authors: `span[itemprop="author"]` no longer exists. Now `.art-authors .profile-card-drop` ("Given Surname"). `citation_author` metas are "Surname, Given".
-- Keywords: `.html-keywords-link` class is gone (plain `<a>` inside `#html-keywords`). Now `meta:name:dc.subject` (no `citation_keywords` tag on MDPI).
+- Keywords: `.html-keywords-link` class is gone (plain `<a>` inside `#html-keywords`). One `dc.subject` tag per keyword (6 on Sensors 25, 4511, Nov 2026), so read with `selector:meta[name="dc.subject"]?content` (no `citation_keywords` tag on MDPI).
 - Body: `#article-contents` is gone. Now `.html-body` (sections only; `.html-back` holds contributions/funding/acknowledgements and is not clipped).
 - References: `#html-references_list ol` (`ol.html-xx`); each item keeps its Google Scholar / CrossRef / Scilit links.
 - Dates: `citation_publication_date` is now "2025/1" (year/month), which broke the `split:"-"` year. Use `dc.date` ("2025-07-21").

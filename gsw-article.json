@@ -2,7 +2,7 @@
   "schemaVersion": "0.1.0",
   "name": "GeoScienceWorld Article",
   "behavior": "create",
-  "noteNameFormat": "{% if selector:.al-author-name .linked-name|slice:2,3 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{% if selector:.al-author-name .linked-name|slice:1,2 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-author-name .linked-name|slice:1,2|join|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}{% endif %}",
+  "noteNameFormat": "{% set n = selector:.al-author-name .linked-name|length %}{% if n > 2 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} et al. ({{meta:name:citation_publication_date|split:\"/\"|first}}){% elseif n > 1 %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} and {{selector:.al-author-name .linked-name|last|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% else %}{{selector:.al-author-name .linked-name|first|split:\" \"|last}} ({{meta:name:citation_publication_date|split:\"/\"|first}}){% endif %}",
   "path": "Research/Literature",
   "triggers": [
     "/^https?:\\/\\/pubs\\.geoscienceworld\\.org\\//"

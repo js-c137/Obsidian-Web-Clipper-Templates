@@ -2,7 +2,7 @@
   "schemaVersion": "0.1.0",
   "name": "Taylor & Francis Article",
   "behavior": "create",
-  "noteNameFormat": "{% if selector:.NLM_contrib-group .contribDegrees:nth-child(3) %}{{meta:name:dc.Creator|first|split:\" \"|last}} et al. ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% else %}{% if selector:.NLM_contrib-group .contribDegrees:nth-child(2) %}{{meta:name:dc.Creator|first|split:\" \"|last}} and {{meta:name:dc.Creator|slice:1,2|first|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% else %}{{meta:name:dc.Creator|first|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% endif %}{% endif %}",
+  "noteNameFormat": "{% set n = selector:meta[name=\"dc.Creator\"]?content|length %}{% if n > 2 %}{{selector:meta[name=\"dc.Creator\"]?content|first|trim|split:\" \"|last}} et al. ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% elseif n > 1 %}{{selector:meta[name=\"dc.Creator\"]?content|first|trim|split:\" \"|last}} and {{selector:meta[name=\"dc.Creator\"]?content|last|trim|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% else %}{{selector:meta[name=\"dc.Creator\"]?content|first|trim|split:\" \"|last}} ({{url|split:\"/doi/\"|last|split:\"#\"|first|split:\"/\"|last|split:\".\"|slice:1,2|first}}){% endif %}",
   "path": "Research/Literature",
   "triggers": [
     "/^https?:\\/\\/(www\\.)?tandfonline\\.com\\/doi\\/(full|abs)\\//"

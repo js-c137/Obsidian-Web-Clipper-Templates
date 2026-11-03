@@ -2,7 +2,7 @@
   "schemaVersion": "0.1.0",
   "name": "ESSOAr Preprint",
   "behavior": "create",
-  "noteNameFormat": "{% if selector:.core-author-link|slice:2,3 %}{{meta:name:citation_author|first|split:\", \"|first}} et al. ({{meta:name:citation_online_date|split:\"/\"|first}}){% else %}{% if selector:.core-author-link|slice:1,2 %}{{meta:name:citation_author|first|split:\", \"|first}} and {{meta:name:citation_author|slice:1,2|first|split:\", \"|first}} ({{meta:name:citation_online_date|split:\"/\"|first}}){% else %}{{meta:name:citation_author|first|split:\", \"|first}} ({{meta:name:citation_online_date|split:\"/\"|first}}){% endif %}{% endif %}",
+  "noteNameFormat": "{% set n = selector:meta[name=\"citation_author\"]?content|length %}{% if n > 2 %}{{selector:meta[name=\"citation_author\"]?content|first|split:\", \"|first|trim}} et al. ({{meta:name:citation_online_date|split:\"/\"|first}}){% elseif n > 1 %}{{selector:meta[name=\"citation_author\"]?content|first|split:\", \"|first|trim}} and {{selector:meta[name=\"citation_author\"]?content|last|split:\", \"|first|trim}} ({{meta:name:citation_online_date|split:\"/\"|first}}){% else %}{{selector:meta[name=\"citation_author\"]?content|first|split:\", \"|first|trim}} ({{meta:name:citation_online_date|split:\"/\"|first}}){% endif %}",
   "path": "Research/Literature",
   "triggers": [
     "/^https?:\\/\\/(www\\.)?essopenarchive\\.org\\/doi\\//"
@@ -15,7 +15,7 @@
     },
     {
       "name": "authors",
-      "value": "{{meta:name:citation_author}}",
+      "value": "{{selector:meta[name=\"citation_author\"]?content}}",
       "type": "multitext"
     },
     {

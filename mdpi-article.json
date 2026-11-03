@@ -70,7 +70,7 @@
     },
     {
       "name": "keywords",
-      "value": "{{meta:name:dc.subject}}",
+      "value": "{{selector:meta[name=\"dc.subject\"]?content}}",
       "type": "multitext"
     },
     {
@@ -89,5 +89,5 @@
       "type": "multitext"
     }
   ],
-  "noteContentFormat": "# {{meta:name:citation_title}}\n\n## Abstract\n\n{{selectorHtml:#html-abstract .html-p:not(section[type=\"highlights\"] .html-p)|remove_html:\"nobr,.MathJax_Preview\"|markdown|trim}}\n\n{% if selectorHtml:#html-abstract section[type=\"highlights\"] %}## Highlights\n\n{{selectorHtml:#html-abstract section[type=\"highlights\"]|remove_html:\"h2\"|markdown|trim}}\n\n{% endif %}## Keywords\n\n{{meta:name:dc.subject|join:\", \"}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.html-body|remove_html:\"nobr,.MathJax_Preview\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:#html-references_list ol|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
+  "noteContentFormat": "# {{meta:name:citation_title}}\n\n## Abstract\n\n{{selectorHtml:#html-abstract .html-p:not(section[type=\"highlights\"] .html-p)|remove_html:\"nobr,.MathJax_Preview\"|markdown|trim}}\n\n{% if selectorHtml:#html-abstract section[type=\"highlights\"] %}## Highlights\n\n{{selectorHtml:#html-abstract section[type=\"highlights\"]|remove_html:\"h2\"|markdown|trim}}\n\n{% endif %}## Keywords\n\n{{selector:meta[name=\"dc.subject\"]?content|join:\", \"}}\n\n---\n\n## Article Content\n\n{{selectorHtml:.html-body|remove_html:\"nobr,.MathJax_Preview\"|markdown|trim}}\n\n---\n\n## References\n\n{{selectorHtml:#html-references_list ol|markdown|trim}}\n\n---\n\n## My Notes\n\n> [!note] Reading Notes\n> Add your annotations here\n\n## Key Concepts\n\n-\n\n## Questions and Follow-ups\n\n-"
 }

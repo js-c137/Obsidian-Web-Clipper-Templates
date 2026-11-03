@@ -2,7 +2,7 @@
   "schemaVersion": "0.1.0",
   "name": "AGU Article",
   "behavior": "create",
-  "noteNameFormat": "{% if selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:2,3 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} et al. ({{selector:.epub-date|split:\" \"|last}}){% else %}{% if selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:1,2 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} and {{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|slice:1,2|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% else %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% endif %}{% endif %}",
+  "noteNameFormat": "{% set n = selector:.loa-authors-trunc .author-name.accordion-tabbed__control|length %}{% if n > 2 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} et al. ({{selector:.epub-date|split:\" \"|last}}){% elseif n > 1 %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} and {{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|last|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% else %}{{selector:.loa-authors-trunc .author-name.accordion-tabbed__control|first|split:\" \"|last}} ({{selector:.epub-date|split:\" \"|last}}){% endif %}",
   "path": "Research/Literature",
   "triggers": [
     "/^https?:\\/\\/([a-z0-9-]+\\.)?onlinelibrary\\.wiley\\.com\\/doi\\//"
